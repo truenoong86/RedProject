@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "845827503433",
+    "firebase_url": "https://redapp-fe239.firebaseio.com",
+    "project_id": "redapp-fe239",
+    "storage_bucket": "redapp-fe239.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845827503433:android:aab66027bfd7a8d5",
+        "android_client_info": {
+          "package_name": "com.example.trueno.redapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845827503433-bt2rtoht7gcb025qfrmk4n654mu9gphs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trueno.redapp",
+            "certificate_hash": "7ba155ef4b787e719df9fbb967f9a1ad143c735a"
+          }
+        },
+        {
+          "client_id": "845827503433-84a2r7vrjatd8jsc96rdfih2d50a11fa.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "845827503433-84a2r7vrjatd8jsc96rdfih2d50a11fa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBg3b2MOpdwQGP9NDfTT8kzW8Zq_X2IZ0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845827503433-84a2r7vrjatd8jsc96rdfih2d50a11fa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845827503433:android:a28d5c03449d5db5",
+        "android_client_info": {
+          "package_name": "com.example.trueno.redproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845827503433-uv76ihfea24us5lqbdbnklidj393l644.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trueno.redproject",
+            "certificate_hash": "841c31bb55294a62be50781530e044f7b4411876"
+          }
+        },
+        {
+          "client_id": "845827503433-84a2r7vrjatd8jsc96rdfih2d50a11fa.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "845827503433-84a2r7vrjatd8jsc96rdfih2d50a11fa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBg3b2MOpdwQGP9NDfTT8kzW8Zq_X2IZ0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845827503433-84a2r7vrjatd8jsc96rdfih2d50a11fa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

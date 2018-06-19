@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/landingPage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".LandingPage">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#30000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/btnFacebook"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:id="@+id/customFacebook"
+                android:layout_width="322dp"
+                android:layout_height="55dp"
+                android:background="@color/com_facebook_blue"
+                android:text="Continue with Facebook"
+                android:textColor="#fff"
+                android:textSize="14dp"
+                android:drawableLeft="@mipmap/fb_logo"
+                android:paddingLeft="20dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/btnGoogle"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:text="Google" />
+
+            <Button
+                android:id="@+id/customGoogle"
+                android:layout_width="322dp"
+                android:layout_height="55dp"
+                android:background="@color/googlePlusBackground"
+                android:text="Continue with Google"
+                android:textColor="#fff"
+                android:textSize="14dp"
+                android:drawableLeft="@mipmap/mail_icon"
+                android:paddingLeft="20dp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="322dp"
+            android:layout_height="55dp"
+            android:text="Continue with Email"
+            android:layout_marginTop="20dp"
+            android:background="#6E8F00"
+            android:textColor="#fff"
+            android:textSize="14dp"
+            android:drawableLeft="@mipmap/mail_icon"
+            android:paddingLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:text="Already have an account?"
+            android:textColor="#fff"
+            android:textSize="12dp"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/fui_transparent"
+            android:text="@string/signIn"
+            android:textColor="#fff"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>
