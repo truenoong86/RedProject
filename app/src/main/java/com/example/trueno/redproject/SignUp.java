@@ -54,6 +54,20 @@ public class SignUp extends AppCompatActivity {
         tvTerms.setText(Html.fromHtml("<u>Terms of Use</u> "));
         tvPrivacyPolicy.setText(Html.fromHtml("<u>Privacy Policy</u>"));
 
+        tvTerms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignUp.this, TermsActivity.class));
+            }
+        });
+
+        tvPrivacyPolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignUp.this, PrivacyPolicyActivity.class));
+            }
+        });
+
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

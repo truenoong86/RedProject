@@ -18,7 +18,7 @@
             tools:replace="android:value" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAsRHjb3C2oZgX676SbDyK7g0x0GbsTyIo"/>
+            android:value="AIzaSyAsRHjb3C2oZgX676SbDyK7g0x0GbsTyIo" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -47,7 +47,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Account" />
-        <activity android:name=".ForgetPasswordActivity"></activity>
+        <activity android:name=".ForgetPasswordActivity" />
+        <activity android:name=".TermsActivity" />
+        <activity android:name=".PrivacyPolicyActivity"></activity>
     </application>
 
 </manifest>

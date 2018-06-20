@@ -11,13 +11,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-
 import com.example.trueno.redproject.homefragments.Card;
 import com.example.trueno.redproject.homefragments.Faq;
 import com.example.trueno.redproject.homefragments.History;
 import com.example.trueno.redproject.homefragments.Home;
+import com.example.trueno.redproject.homefragments.Profile;
 import com.example.trueno.redproject.homefragments.Support;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +46,11 @@ public class MainActivity extends AppCompatActivity{
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 switch (itemId){
+                    case R.id.action_profile:
+                        replacefragment(new Profile());
+                        CloseDrawer();
+                        return true;
+
                     case R.id.action_home:
                         replacefragment(new Home());
                         CloseDrawer();
