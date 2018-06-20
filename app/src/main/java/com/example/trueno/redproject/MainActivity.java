@@ -19,12 +19,20 @@ import com.example.trueno.redproject.homefragments.Home;
 import com.example.trueno.redproject.homefragments.Profile;
 import com.example.trueno.redproject.homefragments.Support;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
+
     FragmentTransaction ft;
     DrawerLayout drawerLayout;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
