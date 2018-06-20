@@ -19,6 +19,7 @@
             android:layout_height="52dp" />
 
         <ImageView
+            android:id="@+id/mainHeader"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:src="@mipmap/extra_mile_logo" />

@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         configureNavigationDrawer();
         configureToolbar();
+
         if(savedInstanceState==null){
             replacefragment(new Home());
         }
@@ -99,12 +100,8 @@ public class MainActivity extends AppCompatActivity{
                 return false;
             }
         });
-//        navView.setNavigationItemSelectedListener(menuItem -> {
-//            int itemId = menuItem.getItemId();
-//            return false;
-//        });
-
     }
+
     private void configureToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -115,6 +112,7 @@ public class MainActivity extends AppCompatActivity{
         actionbar.setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
@@ -132,6 +130,7 @@ public class MainActivity extends AppCompatActivity{
         }
         return false;
     }
+
     public void replacefragment(Fragment fragment) {
         ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content, fragment);
@@ -139,9 +138,11 @@ public class MainActivity extends AppCompatActivity{
         // Complete the changes added above
         ft.commit();
     }
+
     public void CloseDrawer() {
         drawerLayout.closeDrawer(GravityCompat.START);
     }
+
     public void OpenDrawer() {
         drawerLayout.openDrawer(GravityCompat.START);
     }
