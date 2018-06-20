@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +21,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignUp extends AppCompatActivity {
     public static final String TAG = "SignUp.java";
 
+    private android.support.v7.widget.Toolbar back;
+    public TextView tvTerms, tvPrivacyPolicy;
     public EditText editTextUserEmail, editTextPassword, editTextConfirmPassword;
     public Button buttonSignUp;
 
@@ -32,11 +36,23 @@ public class SignUp extends AppCompatActivity {
         
         firebaseAuth = FirebaseAuth.getInstance();
 
-
+        back = (android.support.v7.widget.Toolbar) findViewById(R.id.back);
+        tvTerms = (TextView) findViewById(R.id.tvTerms);
+        tvPrivacyPolicy = (TextView) findViewById(R.id.tvPrivacyPolicy);
         editTextUserEmail = (EditText) findViewById(R.id.etUserEmail);
         editTextPassword = (EditText) findViewById(R.id.etUserPassword);
         editTextConfirmPassword = (EditText) findViewById(R.id.etUserConfirmPassword);
         buttonSignUp = (Button) findViewById(R.id.btnSignUp);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SignUp.super.onBackPressed();
+            }
+        });
+
+        tvTerms.setText(Html.fromHtml("<u>Terms of Use</u> "));
+        tvPrivacyPolicy.setText(Html.fromHtml("<u>Privacy Policy</u>"));
 
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override

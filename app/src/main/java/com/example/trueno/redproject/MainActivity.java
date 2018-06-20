@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.trueno.redproject.homefragments.Card;
@@ -18,7 +19,9 @@ import com.example.trueno.redproject.homefragments.Faq;
 import com.example.trueno.redproject.homefragments.History;
 import com.example.trueno.redproject.homefragments.Home;
 import com.example.trueno.redproject.homefragments.Support;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 
 public class MainActivity extends AppCompatActivity{
     FragmentTransaction ft;
@@ -70,9 +73,24 @@ public class MainActivity extends AppCompatActivity{
                         return true;
 
                     case R.id.action_logout:
-                        FirebaseAuth.getInstance().signOut();
-                        finish();
-                        startActivity(new Intent(MainActivity.this, LandingPage.class));
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                            for (UserInfo userInfo : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
+                                if (userInfo.getProviderId().equals("facebook.com")) {
+                                    LoginManager.getInstance().logOut();
+                                    FirebaseAuth.getInstance().signOut();
+                                    finish();
+                                    startActivity(new Intent(MainActivity.this, LandingPage.class));
+                                } else {
+                                    FirebaseAuth.getInstance().signOut();
+                                    finish();
+                                    startActivity(new Intent(MainActivity.this, LandingPage.class));
+                                }
+                            }
+                        } else {
+                            startActivity(new Intent(MainActivity.this, LandingPage.class));
+                        }
+
+                        break;
                 }
                 return false;
             }

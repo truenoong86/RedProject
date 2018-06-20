@@ -88,6 +88,7 @@ public class LandingPage extends AppCompatActivity {
         });
 
         buttonSignIn.setText(Html.fromHtml("<u>Sign In</u>"));
+
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,7 +107,6 @@ public class LandingPage extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -130,8 +130,9 @@ public class LandingPage extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        Toast.makeText(LandingPage.this, "onStart",
-                Toast.LENGTH_SHORT).show();
+        if (currentUser != null) {
+            startActivity(new Intent(LandingPage.this, MainActivity.class));
+        }
     }
 
     private void signIn() {

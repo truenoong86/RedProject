@@ -12,6 +12,7 @@
         android:layout_height="52dp">
 
         <android.support.v7.widget.Toolbar
+            android:id="@+id/back"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             app:navigationIcon="@drawable/ic_arrow_back" />
@@ -66,7 +67,7 @@
             android:textSize="14dp" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tvForgotPassword"
             android:layout_width="310dp"
             android:layout_height="wrap_content"
             android:text="Forgot password?"
@@ -83,7 +84,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
             android:text="Next"
             android:background="#6E8F00"
             android:layout_marginBottom="20dp"

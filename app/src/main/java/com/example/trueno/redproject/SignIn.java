@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +21,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignIn extends AppCompatActivity {
     public static final String TAG = "SignIn.java";
 
+    private android.support.v7.widget.Toolbar back;
+    private TextView tvForgotPassword;
     private EditText editTextEmail, editTextPassword;
     private Button buttonSignin;
 
@@ -32,10 +36,20 @@ public class SignIn extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        back = (android.support.v7.widget.Toolbar) findViewById(R.id.back);
+        tvForgotPassword = (TextView) findViewById(R.id.tvForgotPassword);
         editTextEmail = (EditText) findViewById(R.id.etEmail);
         editTextPassword = (EditText) findViewById(R.id.etUserPassword);
-
         buttonSignin = (Button) findViewById(R.id.btnSignIn);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SignIn.super.onBackPressed();
+            }
+        });
+
+        tvForgotPassword.setText(Html.fromHtml("<u>Forgot Password?</u>"));
 
         buttonSignin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +57,6 @@ public class SignIn extends AppCompatActivity {
                 startSignIn();
             }
         });
-
     }
 
     private void startSignIn() {
