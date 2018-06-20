@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".homefragments.Card">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center">
+            
+            <ImageView
+                android:layout_width="35.09dp"
+                android:layout_height="24.34dp"
+                android:src="@drawable/mastercard"/>
+
+            <LinearLayout
+                android:layout_width="292dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9037"
+                    android:textColor="#000"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PRIMARY"
+                    android:textColor="#A8A8A8"
+                    android:textSize="14dp" />
+
+            </LinearLayout>
+            
+            <ImageView
+                android:layout_width="13.29dp"
+                android:layout_height="25.09dp"
+                android:src="@drawable/right_arrow" />
+            
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnAddCard"
+            android:layout_width="308.73dp"
+            android:layout_height="45dp"
+            android:text="Add Card"
+            android:background="#6E8F00"
+            android:textColor="#fff"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</FrameLayout>

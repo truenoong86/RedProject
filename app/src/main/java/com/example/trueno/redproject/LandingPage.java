@@ -39,10 +39,9 @@ import com.facebook.appevents.AppEventsLogger;
 public class LandingPage extends AppCompatActivity {
     public static final String TAG = "LandingPage.java";
 
-    public Button buttonSignIn, buttonSignUp;
+    public Button buttonSignIn, buttonSignUp, customFacebook, customGoogle;
     private GoogleSignInClient mGoogleSignInClient;
-    public static final Integer RC_SIGN_IN = 123;
-
+    public static final int RC_SIGN_IN = 1;
 
     CallbackManager mCallbackManager;
 
@@ -60,10 +59,12 @@ public class LandingPage extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         buttonSignIn = (Button) findViewById(R.id.btnSignIn);
         buttonSignUp = (Button) findViewById(R.id.btnSignUp);
-        SignInButton signInButton = findViewById(R.id.btnGoogle);
+        customFacebook = (Button) findViewById(R.id.customFacebook);
+        customGoogle = (Button) findViewById(R.id.customGoogle);
+        final SignInButton signInButton = findViewById(R.id.btnGoogle);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         mCallbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = findViewById(R.id.btnFacebook);
+        final LoginButton loginButton = findViewById(R.id.btnFacebook);
         loginButton.setReadPermissions("email", "public_profile");
 
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -85,6 +86,7 @@ public class LandingPage extends AppCompatActivity {
                 // ...
             }
         });
+
         buttonSignIn.setText(Html.fromHtml("<u>Sign In</u>"));
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,13 +110,19 @@ public class LandingPage extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        customGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn();
             }
         });
 
+        customFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginButton.performClick();
+            }
+        });
     }
 
     @Override
@@ -194,14 +202,12 @@ public class LandingPage extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(LandingPage.this, "Registration successful",
-                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LandingPage.this, MainActivity.class);
+                            startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LandingPage.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            Toast.makeText(LandingPage.this, "Registration fail",
                                     Toast.LENGTH_SHORT).show();
                         }
 
