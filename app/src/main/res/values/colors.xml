@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#6E8F00</color>
     <color name="colorPrimaryDark">#6E8F00</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#6E8F00</color>
     <color name="googlePlusBackground">#dd4b39</color>
 </resources>

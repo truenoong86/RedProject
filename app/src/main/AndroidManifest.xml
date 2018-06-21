@@ -76,10 +76,9 @@
         <activity android:name=".ForgetPasswordActivity" />
         <activity android:name=".TermsActivity" />
         <activity android:name=".PrivacyPolicyActivity" />
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
         <activity android:name=".CashActivity" />
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".EditProfileActivity"></activity>
     </application>
 
 </manifest>

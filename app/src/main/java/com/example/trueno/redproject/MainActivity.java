@@ -11,20 +11,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import com.example.trueno.redproject.homefragments.Card;
 import com.example.trueno.redproject.homefragments.Faq;
 import com.example.trueno.redproject.homefragments.History;
 import com.example.trueno.redproject.homefragments.Home;
-import com.example.trueno.redproject.homefragments.Profile;
 import com.example.trueno.redproject.homefragments.Support;
 import com.facebook.login.LoginManager;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
 
 public class MainActivity extends AppCompatActivity {
 
+    TextView tvViewProfile;
     FragmentTransaction ft;
     DrawerLayout drawerLayout;
 
@@ -34,6 +37,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         configureNavigationDrawer();
         configureToolbar();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.left_drawer);
+        View headerView = navigationView.getHeaderView(0);
+        tvViewProfile = (TextView) headerView.findViewById(R.id.tvViewProfile);
+
+        tvViewProfile.setText(Html.fromHtml("<u>View Profile</u>"));
+
+        tvViewProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                CloseDrawer();
+            }
+        });
 
         if(savedInstanceState==null){
             replacefragment(new Home());
@@ -49,11 +66,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 switch (itemId){
-                    case R.id.action_profile:
-                        replacefragment(new Profile());
-                        CloseDrawer();
-                        return true;
-
                     case R.id.action_home:
                         replacefragment(new Home());
                         CloseDrawer();
