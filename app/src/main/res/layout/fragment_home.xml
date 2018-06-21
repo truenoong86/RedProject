@@ -57,6 +57,7 @@
                                 android:src="@mipmap/current_location" />
 
                             <EditText
+                                android:id="@+id/etCurrentLocation"
                                 android:layout_width="298dp"
                                 android:layout_height="wrap_content"
                                 android:textSize="14dp" />
@@ -110,22 +111,6 @@
             </LinearLayout>
 
         </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/buttonLayout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#6E8F00"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SEARCH"
-                android:textColor="#fff"
-                android:textSize="14dp"/>
-
-        </LinearLayout>
 
     </LinearLayout>
 

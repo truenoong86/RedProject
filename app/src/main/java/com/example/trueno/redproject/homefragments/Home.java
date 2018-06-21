@@ -11,19 +11,29 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
+import com.example.trueno.redproject.models.PlaceInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,9 +53,11 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     Location mLastLocation;
     LocationRequest mLocationRequest;
     View mapView;
+    EditText etCurrentLocation;
     AutoCompleteTextView destination;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private LocationManager locationManager;
+    private PlaceInfo mPlace;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
@@ -62,6 +75,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapView = mapFragment.getView();
+        etCurrentLocation = (EditText) getView().findViewById(R.id.etCurrentLocation);
         mapFragment.getMapAsync(this);
 
 
@@ -69,7 +83,16 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     }
 
     private void init() {
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(getActivity())
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(getActivity(), this)
+                .build();
+
         destination = (AutoCompleteTextView) getView().findViewById(R.id.destination);
+
+        destination.setOnItemClickListener(mAutocompleteClickListener);
 
         mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(getActivity(), Places.getGeoDataClient(getActivity(), null),
                 LAT_LNG_BOUNDS,null);
@@ -145,4 +168,55 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    /*
+    -------------------------------Google places API autocomplete suggestions-------------------------------
+    */
+
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
+            final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(i);
+            final String placeId = item.getPlaceId();
+
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+        }
+    };
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+            if(!places.getStatus().isSuccess()){
+                places.release();
+                return;
+            }
+            final Place place = places.get(0);
+
+            try {
+                mPlace = new PlaceInfo();
+                mPlace.setName(place.getName().toString());
+                mPlace.setAddress(place.getAddress().toString());
+                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                mPlace.setId(place.getId());
+                mPlace.setWebsiteUri(place.getWebsiteUri());
+                mPlace.setLatlng(place.getLatLng());
+                mPlace.setRating(place.getRating());
+                mPlace.setAttributions(place.getAttributions().toString());
+            } catch (NullPointerException e) {
+
+            }
+
+            LatLng moveCameraToDestination = new LatLng(place.getViewport().getCenter().latitude, place.getViewport().getCenter().longitude);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(moveCameraToDestination));
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(place.getViewport().getCenter().latitude, place.getViewport().getCenter().longitude))
+                    .title(place.getName().toString()));
+            places.release();
+        }
+    };
 }
