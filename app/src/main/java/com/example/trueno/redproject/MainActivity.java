@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
     FragmentTransaction ft;
     DrawerLayout drawerLayout;
-    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

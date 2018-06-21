@@ -1,7 +1,9 @@
 package com.example.trueno.redproject.homefragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -10,18 +12,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
+import com.example.trueno.redproject.CashActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
 import com.example.trueno.redproject.models.PlaceInfo;
@@ -53,8 +55,11 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     Location mLastLocation;
     LocationRequest mLocationRequest;
     View mapView;
+    LinearLayout cashLayout, remarksLayout, promoLayout;
     EditText etCurrentLocation;
     AutoCompleteTextView destination;
+    android.support.v7.widget.CardView afterChoosingLocation, singleLineCard, multiLineCard;
+    Button btnProceed;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private LocationManager locationManager;
     private PlaceInfo mPlace;
@@ -75,9 +80,46 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapView = mapFragment.getView();
-        etCurrentLocation = (EditText) getView().findViewById(R.id.etCurrentLocation);
+        etCurrentLocation = (EditText) view.findViewById(R.id.etCurrentLocation);
+        cashLayout = (LinearLayout) view.findViewById(R.id.cashLayout);
+        remarksLayout = (LinearLayout) view.findViewById(R.id.remarksLayout);
+        promoLayout = (LinearLayout) view.findViewById(R.id.promoLayout);
+        afterChoosingLocation = (android.support.v7.widget.CardView) view.findViewById(R.id.afterChoosingLocation);
+        singleLineCard = (android.support.v7.widget.CardView) view.findViewById(R.id.singleLineCard);
+        multiLineCard = (android.support.v7.widget.CardView) view.findViewById(R.id.multiLineCard);
+        btnProceed = (Button) view.findViewById(R.id.btnProceed);
         mapFragment.getMapAsync(this);
 
+        cashLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), CashActivity.class));
+            }
+        });
+
+        remarksLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                View mView = getLayoutInflater().inflate(R.layout.dialog_remarks, null);
+
+                mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+            }
+        });
+
+        promoLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view){
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                View mView = getLayoutInflater().inflate(R.layout.dialog_promo, null);
+
+                mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+            }
+        });
 
         return view;
     }
@@ -155,8 +197,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-
     }
 
     @Override
@@ -185,38 +225,43 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+
+            afterChoosingLocation.setVisibility(View.VISIBLE);
+            singleLineCard.setVisibility(View.VISIBLE);
+            multiLineCard.setVisibility(View.VISIBLE);
+            btnProceed.setVisibility(View.VISIBLE);
         }
     };
 
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(@NonNull PlaceBuffer places) {
-            if(!places.getStatus().isSuccess()){
-                places.release();
-                return;
-            }
-            final Place place = places.get(0);
-
-            try {
-                mPlace = new PlaceInfo();
-                mPlace.setName(place.getName().toString());
-                mPlace.setAddress(place.getAddress().toString());
-                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
-                mPlace.setId(place.getId());
-                mPlace.setWebsiteUri(place.getWebsiteUri());
-                mPlace.setLatlng(place.getLatLng());
-                mPlace.setRating(place.getRating());
-                mPlace.setAttributions(place.getAttributions().toString());
-            } catch (NullPointerException e) {
-
-            }
-
-            LatLng moveCameraToDestination = new LatLng(place.getViewport().getCenter().latitude, place.getViewport().getCenter().longitude);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(moveCameraToDestination));
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(place.getViewport().getCenter().latitude, place.getViewport().getCenter().longitude))
-                    .title(place.getName().toString()));
+        if(!places.getStatus().isSuccess()){
             places.release();
+            return;
+        }
+        final Place place = places.get(0);
+
+        try {
+            mPlace = new PlaceInfo();
+            mPlace.setName(place.getName().toString());
+            mPlace.setAddress(place.getAddress().toString());
+            mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+            mPlace.setId(place.getId());
+            mPlace.setWebsiteUri(place.getWebsiteUri());
+            mPlace.setLatlng(place.getLatLng());
+            mPlace.setRating(place.getRating());
+            mPlace.setAttributions(place.getAttributions().toString());
+        } catch (NullPointerException e) {
+
+        }
+
+        LatLng moveCameraToDestination = new LatLng(place.getViewport().getCenter().latitude, place.getViewport().getCenter().longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(moveCameraToDestination));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(place.getViewport().getCenter().latitude, place.getViewport().getCenter().longitude))
+                .title(place.getName().toString()));
+        places.release();
         }
     };
 }

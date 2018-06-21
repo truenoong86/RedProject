@@ -11,17 +11,18 @@
     <permission
         android:name="com.example.trueno.redproject.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="com.example.trueno.redproject.permission.MAPS_RECEIVE"/>
 
+    <uses-permission android:name="com.example.trueno.redproject.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -40,7 +41,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB1VuVb0Q_lQpNLVwuAeeZq148LXROcmZ0" />
-        <uses-library android:name="com.google.android.maps" android:required="true" />
+
+        <uses-library
+            android:name="com.google.android.maps"
+            android:required="true" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -74,7 +78,8 @@
         <activity android:name=".PrivacyPolicyActivity" />
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".CashActivity" />
     </application>
 
 </manifest>
