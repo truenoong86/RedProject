@@ -1,28 +1,36 @@
 package com.example.trueno.redproject.homefragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,10 +38,17 @@ import com.google.android.gms.maps.model.LatLng;
 public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private GoogleMap mMap;
-    GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
     View mapView;
+    AutoCompleteTextView destination;
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
+    private LocationManager locationManager;
+    private static final long MIN_TIME = 400;
+    private static final float MIN_DISTANCE = 1000;
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+            new LatLng(-40, -168), new LatLng(71, 136));
 
     public Home() {
         // Required empty public constructor
@@ -49,7 +64,17 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mapView = mapFragment.getView();
         mapFragment.getMapAsync(this);
 
+
         return view;
+    }
+
+    private void init() {
+        destination = (AutoCompleteTextView) getView().findViewById(R.id.destination);
+
+        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(getActivity(), Places.getGeoDataClient(getActivity(), null),
+                LAT_LNG_BOUNDS,null);
+
+        destination.setAdapter(mPlaceAutocompleteAdapter);
     }
 
     @Override
@@ -70,6 +95,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         layoutParams.setMargins(0, 0, 30, 30);
+
+        init();
     }
 
     private synchronized void buildGoogleApiClient() {
@@ -90,6 +117,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
     }
 
+    public String getCurrentLocation(LatLng latLng) {
+        return String.valueOf(latLng);
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -101,6 +132,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+
     }
 
     @Override
