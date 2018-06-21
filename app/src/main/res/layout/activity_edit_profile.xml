@@ -1,9 +1,327 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditProfileActivity">
+    tools:context=".EditProfileActivity"
+    android:background="#fff">
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+            <RelativeLayout
+                android:id="@+id/toolbarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="#fff"
+                android:gravity="center">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/close"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    app:navigationIcon="@drawable/places_ic_clear" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/profilePicture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@id/toolbarLayout"
+                android:gravity="center_horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/profile_image"
+                    android:layout_width="98dp"
+                    android:layout_height="98dp"
+                    android:src="@mipmap/ic_launcher_round" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_below="@id/profilePicture"
+                android:layout_marginTop="5dp"
+                android:padding="15dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:textColor="#6E8F00"
+                    android:textSize="14dp"
+                    android:gravity="left" />
+
+                <EditText
+                    android:layout_width="310dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:textSize="14dp"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp" />
+
+                <TextView
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:text="Country Code"
+                    android:textColor="#6E8F00"
+                    android:textSize="14dp"
+                    android:gravity="left"
+                    android:layout_marginTop="20dp" />
+
+                <EditText
+                    android:layout_width="310dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:textSize="14dp"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp" />
+
+                <TextView
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:text="Phone"
+                    android:textColor="#6E8F00"
+                    android:textSize="14dp"
+                    android:gravity="left"
+                    android:layout_marginTop="20dp" />
+
+                <EditText
+                    android:layout_width="310dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:textSize="14dp"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp" />
+
+                <TextView
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textColor="#6E8F00"
+                    android:textSize="14dp"
+                    android:gravity="left"
+                    android:layout_marginTop="20dp" />
+
+                <EditText
+                    android:layout_width="310dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:textSize="14dp"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp" />
+
+                <TextView
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:text="Vehicle Number"
+                    android:textColor="#6E8F00"
+                    android:textSize="14dp"
+                    android:gravity="left"
+                    android:layout_marginTop="20dp" />
+
+                <EditText
+                    android:layout_width="310dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:textSize="14dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp" />
+                
+                <LinearLayout
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical">
+                    
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vehicle Make"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vehicle Make"
+                        android:textColor="#000"
+                        android:textSize="14dp"
+                        android:layout_weight="1"
+                        android:gravity="right" />
+
+                    <ImageView
+                        android:layout_width="10.66dp"
+                        android:layout_height="5.33dp"
+                        android:src="@mipmap/down_arrow" />
+                    
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vehicle Model"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:layout_weight="1" />
+
+                    <EditText
+                        android:id="@+id/etVehicleModel"
+                        android:layout_width="77dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/rounded_edit_text_background"
+                        android:textSize="14dp"
+                        android:textColor="#000"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Year of Manufacture"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2015"
+                        android:textColor="#000"
+                        android:textSize="14dp"
+                        android:layout_weight="1"
+                        android:gravity="right" />
+
+                    <ImageView
+                        android:layout_width="10.66dp"
+                        android:layout_height="5.33dp"
+                        android:src="@mipmap/down_arrow" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tyre Size"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="205/40R17"
+                        android:textColor="#000"
+                        android:textSize="14dp"
+                        android:layout_weight="1"
+                        android:gravity="right" />
+
+                    <ImageView
+                        android:layout_width="10.66dp"
+                        android:layout_height="5.33dp"
+                        android:src="@mipmap/down_arrow" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Insurance Company"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ABC Insurance"
+                        android:textColor="#000"
+                        android:textSize="14dp"
+                        android:layout_weight="1"
+                        android:gravity="right" />
+
+                    <ImageView
+                        android:layout_width="10.66dp"
+                        android:layout_height="5.33dp"
+                        android:src="@mipmap/down_arrow" />
+
+                </LinearLayout>
+                
+                <Button
+                    android:id="@+id/saveProfile"
+                    android:layout_width="310dp"
+                    android:layout_height="51dp"
+                    android:background="#6E8F00"
+                    android:text="Save"
+                    android:textColor="#fff"
+                    android:textSize="14dp"
+                    android:layout_marginTop="20dp" />
+
+            </LinearLayout>
+            
+        </LinearLayout>
+        
+    </ScrollView>
+
+</RelativeLayout>

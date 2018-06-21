@@ -33,6 +33,7 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
@@ -65,8 +66,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     private PlaceInfo mPlace;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
-            new LatLng(-40, -168), new LatLng(71, 136));
+    private static final LatLngBounds SINGAPORE = new LatLngBounds(
+            new LatLng(-1, -104), new LatLng(1, 103));
 
     public Home() {
         // Required empty public constructor
@@ -104,8 +105,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_remarks, null);
 
                 mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
-                dialog.show();
             }
         });
 
@@ -116,8 +115,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_promo, null);
 
                 mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
-                dialog.show();
             }
         });
 
@@ -136,8 +133,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         destination.setOnItemClickListener(mAutocompleteClickListener);
 
+        AutocompleteFilter filter =
+                new AutocompleteFilter.Builder().setCountry("SG").build();
         mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(getActivity(), Places.getGeoDataClient(getActivity(), null),
-                LAT_LNG_BOUNDS,null);
+                SINGAPORE, filter);
 
         destination.setAdapter(mPlaceAutocompleteAdapter);
     }
@@ -151,6 +150,11 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         }
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
+
+        LatLng SingaporeLatLng = new LatLng(1.28967, 103.85007);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(SingaporeLatLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
         View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         // and next place it, on bottom right (as Google Maps app)

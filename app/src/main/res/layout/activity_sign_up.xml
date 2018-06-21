@@ -53,7 +53,10 @@
                     android:layout_weight="1"
                     android:background="@drawable/edit_text_background"
                     android:inputType="textPersonName"
-                    android:padding="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     android:hint="First Name"
                     android:textSize="14dp" />
 
@@ -66,7 +69,10 @@
                     android:layout_weight="1"
                     android:background="@drawable/edit_text_background"
                     android:inputType="textPersonName"
-                    android:padding="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     android:hint="Last Name"
                     android:textSize="14dp" />
 
@@ -77,7 +83,10 @@
                 android:layout_width="310dp"
                 android:layout_height="45dp"
                 android:inputType="textPersonName"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:background="@drawable/edit_text_background"
                 android:layout_marginEnd="10dp"
                 android:layout_marginLeft="10dp"
@@ -92,7 +101,10 @@
                 android:layout_width="310dp"
                 android:layout_height="45dp"
                 android:inputType="textPassword"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:background="@drawable/edit_text_background"
                 android:layout_marginEnd="10dp"
                 android:layout_marginLeft="10dp"
@@ -107,7 +119,10 @@
                 android:layout_width="310dp"
                 android:layout_height="45dp"
                 android:inputType="textPassword"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:background="@drawable/edit_text_background"
                 android:layout_marginEnd="10dp"
                 android:layout_marginLeft="10dp"
@@ -133,7 +148,10 @@
                     android:layout_weight="1"
                     android:background="@drawable/edit_text_background"
                     android:inputType="number"
-                    android:padding="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     android:hint="Country Code"
                     android:textSize="14dp" />
 
@@ -146,7 +164,10 @@
                     android:layout_weight="1"
                     android:background="@drawable/edit_text_background"
                     android:inputType="number|phone"
-                    android:padding="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     android:hint="Phone Number"
                     android:textSize="14dp" />
 
@@ -163,7 +184,10 @@
                 android:layout_marginTop="15dp"
                 android:inputType="textPersonName"
                 android:hint="Vehicle Number"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:background="@drawable/edit_text_background"
                 android:textSize="14dp" />
 
@@ -178,7 +202,10 @@
                 android:layout_marginTop="15dp"
                 android:inputType="textPersonName"
                 android:hint="Vehicle Model"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:background="@drawable/edit_text_background"
                 android:textSize="14dp" />
 
@@ -193,7 +220,10 @@
                 android:layout_marginTop="15dp"
                 android:inputType="textPersonName"
                 android:hint="Year of Manufacture"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:background="@drawable/edit_text_background"
                 android:textSize="14dp" />
 
@@ -208,7 +238,10 @@
                 android:layout_marginTop="15dp"
                 android:inputType="textPersonName"
                 android:hint="Tyre Size"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:background="@drawable/edit_text_background"
                 android:textSize="14dp" />
 
@@ -224,7 +257,10 @@
                 android:background="@drawable/edit_text_background"
                 android:hint="Insurance"
                 android:inputType="textPersonName"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:textSize="14dp" />
 
             <LinearLayout
@@ -291,7 +327,7 @@
                 android:textColor="#fff" />
 
         </LinearLayout>
-    </ScrollView>
 
+    </ScrollView>
 
 </RelativeLayout>
