@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Yay, we found you a driver!"
+            android:text="Your driver has arrived!"
             android:textColor="#000"
             android:textSize="18dp"/>
 
@@ -38,38 +38,22 @@
             android:layout_height="141dp"
             android:src="@mipmap/ic_launcher_round"
             android:layout_marginTop="15dp"/>
-        
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Aqil Tahir"
-            android:textColor="#000"
-            android:textSize="18dp"
-            android:layout_marginTop="15dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SJB1453J"
             android:textColor="#000"
-            android:layout_marginTop="5dp"/>
+            android:textSize="12dp"
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tow Truck"
             android:textColor="#000"
-            android:textSize="14dp"
+            android:textSize="12dp"
             android:layout_marginTop="5dp"/>
-
-        <TextView
-            android:id="@+id/tvViewDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="View Details"
-            android:textColor="#6E8F00"
-            android:textSize="14dp"
-            android:layout_marginTop="10dp"/>
 
     </LinearLayout>
 

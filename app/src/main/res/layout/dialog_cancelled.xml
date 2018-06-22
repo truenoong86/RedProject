@@ -46,7 +46,8 @@
             android:layout_height="wrap_content"
             android:text="SJB1453J"
             android:textColor="#000"
-            android:layout_marginTop="10dp"
+            android:textSize="12dp"
+            android:layout_marginTop="5dp"
             android:alpha="0.5"/>
 
         <TextView
@@ -54,8 +55,8 @@
             android:layout_height="wrap_content"
             android:text="Tow Truck"
             android:textColor="#000"
-            android:textSize="14dp"
-            android:layout_marginTop="10dp"
+            android:textSize="12dp"
+            android:layout_marginTop="5dp"
             android:alpha="0.5"/>
 
         <TextView
