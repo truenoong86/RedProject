@@ -9,6 +9,8 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -173,6 +175,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         float la = (float) location.getLatitude() ;
         float lo = (float) location.getLongitude();
 
+
+
         LatLng TutorialsPoint = new LatLng(la, lo);
         mMap.addMarker(new
                 MarkerOptions().position(TutorialsPoint).title("Current Location"));
@@ -210,6 +214,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
@@ -278,5 +283,19 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         }
     };
 
-
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+            String locationAddress;
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    locationAddress = bundle.getString("address");
+                    break;
+                default:
+                    locationAddress = null;
+            }
+            currentLocation.setText(locationAddress);
+        }
+    }
 }
