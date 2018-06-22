@@ -57,11 +57,12 @@
                                 android:layout_height="20dp"
                                 android:src="@mipmap/current_location" />
 
-                            <EditText
-                                android:id="@+id/etCurrentLocation"
+                            <AutoCompleteTextView
+                                android:id="@+id/currentLocation"
                                 android:layout_width="298dp"
                                 android:layout_height="wrap_content"
-                                android:textSize="14dp" />
+                                android:textSize="14dp"
+                                android:text="Current Location" />
 
                         </LinearLayout>
 
@@ -218,7 +219,7 @@
                     android:layout_width="349dp"
                     android:layout_height="51dp"
                     android:layout_marginBottom="10dp"
-                    android:visibility="invisible" >
+                    android:visibility="invisible">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -260,7 +261,7 @@
                     android:layout_width="349dp"
                     android:layout_height="99dp"
                     android:layout_marginBottom="10dp"
-                    android:visibility="invisible">
+                    android:visibility="gone">
 
                     <ScrollView
                         android:layout_width="match_parent"
@@ -313,7 +314,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp">
 
                                 <ImageView
                                     android:layout_width="26.5dp"
@@ -350,7 +352,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp">
 
                                 <ImageView
                                     android:layout_width="26.5dp"
@@ -387,7 +390,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp">
 
                                 <ImageView
                                     android:layout_width="26.5dp"
@@ -424,7 +428,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp">
 
                                 <ImageView
                                     android:layout_width="26.5dp"
@@ -461,7 +466,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp">
 
                                 <ImageView
                                     android:layout_width="26.5dp"

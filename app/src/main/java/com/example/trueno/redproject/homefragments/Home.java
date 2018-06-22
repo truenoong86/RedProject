@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.trueno.redproject.CashActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
@@ -57,17 +59,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     LocationRequest mLocationRequest;
     View mapView;
     LinearLayout cashLayout, remarksLayout, promoLayout;
-    EditText etCurrentLocation;
-    AutoCompleteTextView destination;
+    AutoCompleteTextView currentLocation, destination;
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard, multiLineCard;
     Button btnProceed;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
-    private LocationManager locationManager;
     private PlaceInfo mPlace;
-    private static final long MIN_TIME = 400;
-    private static final float MIN_DISTANCE = 1000;
     private static final LatLngBounds SINGAPORE = new LatLngBounds(
-            new LatLng(-1, -104), new LatLng(1, 103));
+            new LatLng(-35.0, 138.58), new LatLng(-34.9, 138.61));
 
     public Home() {
         // Required empty public constructor
@@ -81,7 +79,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapView = mapFragment.getView();
-        etCurrentLocation = (EditText) view.findViewById(R.id.etCurrentLocation);
+        currentLocation = (AutoCompleteTextView) view.findViewById(R.id.currentLocation);
         cashLayout = (LinearLayout) view.findViewById(R.id.cashLayout);
         remarksLayout = (LinearLayout) view.findViewById(R.id.remarksLayout);
         promoLayout = (LinearLayout) view.findViewById(R.id.promoLayout);
@@ -90,6 +88,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         multiLineCard = (android.support.v7.widget.CardView) view.findViewById(R.id.multiLineCard);
         btnProceed = (Button) view.findViewById(R.id.btnProceed);
         mapFragment.getMapAsync(this);
+
+        singleLineCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                multiLineCard.setVisibility(View.VISIBLE);
+            }
+        });
 
         cashLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +134,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 .enableAutoManage(getActivity(), this)
                 .build();
 
+        currentLocation = (AutoCompleteTextView) getView().findViewById(R.id.currentLocation);
         destination = (AutoCompleteTextView) getView().findViewById(R.id.destination);
 
         destination.setOnItemClickListener(mAutocompleteClickListener);
@@ -145,16 +151,11 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
-
-        LatLng SingaporeLatLng = new LatLng(1.28967, 103.85007);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(SingaporeLatLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
         View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         // and next place it, on bottom right (as Google Maps app)
@@ -164,6 +165,19 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         layoutParams.setMargins(0, 0, 30, 30);
+
+        Criteria criteria = new Criteria();
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        String provider = locationManager.getBestProvider(criteria, false);
+        Location location = locationManager.getLastKnownLocation(provider);
+        float la = (float) location.getLatitude() ;
+        float lo = (float) location.getLongitude();
+
+        LatLng TutorialsPoint = new LatLng(la, lo);
+        mMap.addMarker(new
+                MarkerOptions().position(TutorialsPoint).title("Current Location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(TutorialsPoint));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
         init();
     }
@@ -186,10 +200,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
     }
 
-    public String getCurrentLocation(LatLng latLng) {
-        return String.valueOf(latLng);
-    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -197,7 +207,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -232,7 +242,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
             afterChoosingLocation.setVisibility(View.VISIBLE);
             singleLineCard.setVisibility(View.VISIBLE);
-            multiLineCard.setVisibility(View.VISIBLE);
             btnProceed.setVisibility(View.VISIBLE);
         }
     };
@@ -268,4 +277,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         places.release();
         }
     };
+
+
 }
