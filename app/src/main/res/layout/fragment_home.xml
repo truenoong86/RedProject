@@ -62,7 +62,7 @@
                                 android:layout_width="298dp"
                                 android:layout_height="wrap_content"
                                 android:textSize="14dp"
-                                android:text="Current Location" />
+                                android:text="Loca" />
 
                         </LinearLayout>
 
@@ -261,7 +261,7 @@
                     android:layout_width="349dp"
                     android:layout_height="99dp"
                     android:layout_marginBottom="10dp"
-                    android:visibility="gone">
+                    android:visibility="invisible">
 
                     <ScrollView
                         android:layout_width="match_parent"
