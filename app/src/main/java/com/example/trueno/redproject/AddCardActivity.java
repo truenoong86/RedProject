@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 public class AddCardActivity extends AppCompatActivity {
 
+    private android.support.v7.widget.Toolbar back;
     public TextView tvTerms;
 
     @Override
@@ -16,6 +17,7 @@ public class AddCardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_card);
 
+        back = (android.support.v7.widget.Toolbar) findViewById(R.id.back);
         tvTerms = (TextView) findViewById(R.id.tvTerms);
 
         tvTerms.setText(Html.fromHtml("<u>Terms & Conditions</u> "));
@@ -24,6 +26,13 @@ public class AddCardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(AddCardActivity.this, TermsActivity.class));
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddCardActivity.super.onBackPressed();
             }
         });
     }
