@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#00000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/toolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/close"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                app:navigationIcon="@drawable/places_ic_clear" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yay, we found you a driver!"
+            android:textColor="#000"
+            android:textSize="18dp"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="141dp"
+            android:layout_height="141dp"
+            android:src="@mipmap/ic_launcher_round"
+            android:layout_marginTop="15dp"/>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aqil Tahir"
+            android:textColor="#000"
+            android:textSize="18dp"
+            android:layout_marginTop="15dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SJB1453J"
+            android:textColor="#000"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tow Truck"
+            android:textColor="#000"
+            android:textSize="14dp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/tvViewDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Details"
+            android:textColor="#6E8F00"
+            android:textSize="14dp"
+            android:layout_marginTop="10dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

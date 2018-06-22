@@ -22,11 +22,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
 import com.example.trueno.redproject.CashActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
