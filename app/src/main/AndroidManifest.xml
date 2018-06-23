@@ -79,7 +79,8 @@
         <activity android:name=".CashActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".EditProfileActivity" />
-        <activity android:name=".AddCardActivity"></activity>
+        <activity android:name=".AddCardActivity" />
+        <activity android:name=".CancelBookingActivity"></activity>
     </application>
 
 </manifest>
