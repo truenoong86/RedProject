@@ -30,7 +30,7 @@ public class Card extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_card, container, false);
 
-        btnAddCard = (Button) view.findViewById(R.id.btnProceed);
+        btnAddCard = (Button) view.findViewById(R.id.btnAddCard);
 
         btnAddCard.setOnClickListener(new View.OnClickListener() {
             @Override

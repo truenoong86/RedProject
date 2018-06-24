@@ -80,7 +80,8 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".AddCardActivity" />
-        <activity android:name=".CancelBookingActivity"></activity>
+        <activity android:name=".CancelBookingActivity" />
+        <activity android:name=".FindingDriverActivity"></activity>
     </application>
 
 </manifest>
