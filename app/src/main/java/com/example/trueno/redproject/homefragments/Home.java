@@ -172,11 +172,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         float la = (float) location.getLatitude() ;
         float lo = (float) location.getLongitude();
 
-
-
         LatLng TutorialsPoint = new LatLng(la, lo);
-        mMap.addMarker(new
-                MarkerOptions().position(TutorialsPoint).title("Current Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(TutorialsPoint));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
