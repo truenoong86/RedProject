@@ -82,7 +82,8 @@
         <activity android:name=".CancelBookingActivity" />
         <activity android:name=".FindingDriverActivity" />
         <activity android:name=".CompletedActivity" />
-        <activity android:name=".OnYourWayActivity"></activity>
+        <activity android:name=".OnYourWayActivity" />
+        <activity android:name=".RideDetailsActivity"></activity>
     </application>
 
 </manifest>

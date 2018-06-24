@@ -62,7 +62,7 @@
                                 android:layout_width="298dp"
                                 android:layout_height="wrap_content"
                                 android:textSize="14dp"
-                                android:text="Loca" />
+                                android:text="Current Location" />
 
                         </LinearLayout>
 
