@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.example.trueno.redproject.AddCardActivity;
+import com.example.trueno.redproject.CardSettingsActivity;
 import com.example.trueno.redproject.R;
 
 /**
@@ -17,6 +19,7 @@ import com.example.trueno.redproject.R;
  */
 public class Card extends Fragment {
 
+    LinearLayout cardSettings;
     Button btnAddCard;
 
     public Card() {
@@ -30,7 +33,15 @@ public class Card extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_card, container, false);
 
+        cardSettings = (LinearLayout) view.findViewById(R.id.cardSettings);
         btnAddCard = (Button) view.findViewById(R.id.btnAddCard);
+
+        cardSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), CardSettingsActivity.class));
+            }
+        });
 
         btnAddCard.setOnClickListener(new View.OnClickListener() {
             @Override

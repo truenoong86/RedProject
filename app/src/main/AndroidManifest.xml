@@ -83,7 +83,8 @@
         <activity android:name=".FindingDriverActivity" />
         <activity android:name=".CompletedActivity" />
         <activity android:name=".OnYourWayActivity" />
-        <activity android:name=".RideDetailsActivity"></activity>
+        <activity android:name=".RideDetailsActivity" />
+        <activity android:name=".CardSettingsActivity"></activity>
     </application>
 
 </manifest>
