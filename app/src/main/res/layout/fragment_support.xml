@@ -15,7 +15,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Leave us a feedback"
-            android:layout_margin="20dp" />
+            android:layout_marginTop="15dp"/>
+
+        <Spinner
+            android:id="@+id/feedbacks_spinner"
+            android:layout_width="317dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"/>
 
         <EditText
             android:id="@+id/editText"
@@ -26,7 +32,8 @@
             android:hint="Start typing here"
             android:gravity="top"
             android:padding="10dp"
-            android:textSize="14dp" />
+            android:textSize="14dp"
+            android:layout_marginTop="15dp"/>
 
         <Button
             android:layout_width="308.73dp"
@@ -45,6 +52,7 @@
             android:textSize="14dp" />
 
         <Button
+            android:id="@+id/btnCall"
             android:layout_width="308.73dp"
             android:layout_height="45dp"
             android:background="#6E8F00"

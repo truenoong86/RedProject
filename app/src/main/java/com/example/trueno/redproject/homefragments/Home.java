@@ -18,12 +18,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
 import com.example.trueno.redproject.CashActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
@@ -54,12 +59,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
+    ListView lvServices;
     Location mLastLocation;
     LocationRequest mLocationRequest;
     View mapView;
     LinearLayout cashLayout, remarksLayout, promoLayout;
     AutoCompleteTextView currentLocation, destination;
-    android.support.v7.widget.CardView afterChoosingLocation, singleLineCard, multiLineCard;
+    android.support.v7.widget.CardView afterChoosingLocation, singleLineCard;
     Button btnProceed;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
@@ -79,19 +85,47 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 .findFragmentById(R.id.map);
         mapView = mapFragment.getView();
         currentLocation = (AutoCompleteTextView) view.findViewById(R.id.currentLocation);
+        destination = (AutoCompleteTextView) view.findViewById(R.id.destination);
         cashLayout = (LinearLayout) view.findViewById(R.id.cashLayout);
         remarksLayout = (LinearLayout) view.findViewById(R.id.remarksLayout);
         promoLayout = (LinearLayout) view.findViewById(R.id.promoLayout);
         afterChoosingLocation = (android.support.v7.widget.CardView) view.findViewById(R.id.afterChoosingLocation);
         singleLineCard = (android.support.v7.widget.CardView) view.findViewById(R.id.singleLineCard);
-        multiLineCard = (android.support.v7.widget.CardView) view.findViewById(R.id.multiLineCard);
         btnProceed = (Button) view.findViewById(R.id.btnProceed);
         mapFragment.getMapAsync(this);
 
         singleLineCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                multiLineCard.setVisibility(View.VISIBLE);
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                View mView = getLayoutInflater().inflate(R.layout.dialog_services, null);
+
+                lvServices = (ListView) mView.findViewById(R.id.lvServices);
+
+                String[] values = new String[] { "Tow (Accident)",
+                        "Tow (Breakdown)",
+                        "Tyre Mending",
+                        "Spare Tyre Replacement",
+                        "Battery Jump Start",
+                        "Battery Replacement",
+                        "Others"
+                };
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                        android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+                lvServices.setAdapter(adapter);
+
+                lvServices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Toast.makeText(getContext(), "Chosen", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
             }
         });
 
@@ -109,6 +143,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_remarks, null);
 
                 mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
             }
         });
 
@@ -119,6 +155,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_promo, null);
 
                 mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
             }
         });
 
@@ -129,10 +167,24 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_confirm_booking, null);
 
                 mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
             }
         });
 
+        destination.requestFocus();
+        showKeyBoard();
+
         return view;
+    }
+
+    public void showKeyBoard() {
+        InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        // only will trigger it if no physical keyboard is open
+        mgr.showSoftInput(destination, InputMethodManager.SHOW_IMPLICIT);
+
+        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(destination, 0);
+
     }
 
     private void init() {

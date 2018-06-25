@@ -18,4 +18,13 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
 
+    <string-array name="feedbacks_array">
+        <item>I have been overcharged</item>
+        <item>Incurred charges</item>
+        <item>The service provider was rude</item>
+        <item>The service provider was unprofessional</item>
+        <item>Others</item>
+        <item>Driver requested cash payment</item>
+    </string-array>
+
 </resources>
