@@ -17,6 +17,12 @@
             android:layout_width="341dp"
             android:layout_height="341dp"
             android:src="@mipmap/round_location"/>
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:indicatorName="BallSpinFadeLoaderIndicator" />
         
         <TextView
             android:layout_width="wrap_content"
@@ -24,7 +30,7 @@
             android:text="Finding you a driver…."
             android:textColor="#fff"
             android:textSize="21dp"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="20dp"/>
 
     </LinearLayout>
 

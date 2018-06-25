@@ -122,6 +122,16 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             }
         });
 
+        btnProceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                View mView = getLayoutInflater().inflate(R.layout.dialog_confirm_booking, null);
+
+                mBuilder.setView(mView);
+            }
+        });
+
         return view;
     }
 
