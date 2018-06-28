@@ -39,7 +39,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trueno.redproject.CashActivity;
-import com.example.trueno.redproject.FindingDriverActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
 import com.example.trueno.redproject.models.PlaceInfo;
@@ -74,12 +73,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -98,10 +97,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private int radius = 1;
-    private Boolean driverFound = false;
-    private String driverFoundId;
-    LatLng pickupLocation;
     ListView lvServices;
     Location mLastLocation;
     LocationRequest mLocationRequest;
@@ -110,7 +105,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     LinearLayout cashLayout, remarksLayout, promoLayout;
     AutoCompleteTextView currentLocation, destination;
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard;
-    Button btnProceed, btnConfirmBooking;
+    Button btnProceed;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
     private static final LatLngBounds SINGAPORE = new LatLngBounds(
@@ -128,7 +123,15 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     private LocationCallback mLocationCallback;
     Boolean mRequestingLocationUpdates = false;
 
-    public AddressResultReceiver mResultReceiver;
+    LatLng pickupLocation;
+    Boolean driverFound;
+    String driverFoundId;
+    int radius;
+
+    boolean getDriversAroundStarted = false;
+
+
+    List<Marker>markerList = new ArrayList<Marker>();
 
 
     public Home() {
@@ -154,9 +157,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         btnProceed = (Button) view.findViewById(R.id.btnProceed);
         mapFragment.getMapAsync(this);
 
-        //update saved values
-        updateValuesFromBundle(savedInstanceState);
-
 
         singleLineCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,7 +166,9 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
 
+
                 lvServices = (ListView) mView.findViewById(R.id.lvServices);
+
 
                 final String[] values = new String[] { "Tow (Accident)",
                         "Tow (Breakdown)",
@@ -176,6 +178,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         "Battery Replacement",
                         "Others"
                 };
+
+
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                         android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -193,6 +197,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                     }
                 });
+
+
 
                 dialog.show();
             }
@@ -236,24 +242,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_confirm_booking, null);
 
                 mBuilder.setView(mView);
-                final AlertDialog dialog = mBuilder.create();
+                AlertDialog dialog = mBuilder.create();
                 dialog.show();
-
-                btnConfirmBooking = (Button) dialog.findViewById(R.id.btnConfirmBooking);
-
-                btnConfirmBooking.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("passengerRequest");
-                        GeoFire geoFire = new GeoFire(mRef);
-                        geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-
-                        getClosestDriver();
-                        dialog.dismiss();
-                    }
-                });
             }
         });
 
@@ -261,56 +251,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         showKeyBoard();
 
         return view;
-    }
-
-    private void getClosestDriver() {
-        DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("availableDriver");
-        pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-
-        GeoFire geoFire = new GeoFire(driverLocation);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
-        geoQuery.removeAllListeners();
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                if (!driverFound) {
-                    driverFound = true;
-                    driverFoundId = key;
-
-                    DatabaseReference d
-
-                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
-                    View mView = getLayoutInflater().inflate(R.layout.dialog_found_driver, null);
-
-                    mBuilder.setView(mView);
-                    final AlertDialog dialog = mBuilder.create();
-                    dialog.show();
-                }
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                if (!driverFound) {
-                    radius++;
-                    getClosestDriver();
-                }
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
     }
 
     public void showKeyBoard() {
@@ -366,19 +306,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 // Get the current location of the device and set the position of the map.
                 getDeviceLocation();
-
-                mLocationCallback = new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        if (locationResult == null) {
-                            return;
-                        }
-                        for (Location location : locationResult.getLocations()) {
-                            // Update UI with location data
-                            // ...
-                        }
-                    };
-                };
             }
         });
 
@@ -424,15 +351,20 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         layoutParams.setMargins(0, 0, 30, 30);
 
+//        Criteria criteria = new Criteria();
+//        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+//        String provider = locationManager.getBestProvider(criteria, false);
+//        Location location = locationManager.getLastKnownLocation(provider);
+//        float la = (float) location.getLatitude() ;
+//        float lo = (float) location.getLongitude();
+//
+//        LatLng TutorialsPoint = new LatLng(la, lo);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(TutorialsPoint));
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
+
         init();
     }
 
-    protected void createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
 
     private void updateLocationUI() {
         Log.i("Called","updateLocationUI()");
@@ -508,7 +440,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                             new LatLng(location.getLatitude(), location.getLongitude()), 17.0f  )
                                     );
-                                    startIntentService();
+
+                                    if(!getDriversAroundStarted){
+                                        displayDriversAround();
+                                    }
                                 }
                             }
                         });
@@ -535,23 +470,18 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        startIntentService();
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("Called","onConnected()");
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
     }
 
     @Override
@@ -638,37 +568,18 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         }
     }
 
-    private void startLocationUpdates() {
-        Log.i("Called","startLocationUpdates()");
-        mRequestingLocationUpdates = true;
-        if ( (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                || (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-            mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback,
-                    null /* Looper */);
-        }
-
-    }
-
-    private void stopLocationUpdates() {
-        Log.i("Called","stopLocationUpdates()");
-        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        if (mRequestingLocationUpdates) {
-            startLocationUpdates();
-        }
     }
+
+
 
     @Override
     public void onPause() {
         super.onPause();
         Log.i("Called","onPause()");
 
-        stopLocationUpdates();
         mGoogleApiClient.stopAutoManage(getActivity());
         mGoogleApiClient.disconnect();
 
@@ -683,61 +594,123 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             mGoogleApiClient.disconnect();
         }
     }
+    private void displayDriversAround(){
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
-                mRequestingLocationUpdates);
-        // ...
-        super.onSaveInstanceState(outState);
-    }
+        Log.i("called","started displayDriversAround");
+        getDriversAroundStarted = true;
+        DatabaseReference driversLocation = FirebaseDatabase.getInstance().getReference().child("availableDriver");
 
-    //update saved values
-    private void updateValuesFromBundle(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return;
-        }
+        GeoFire geoFire = new GeoFire(driversLocation);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude()),10000);
+        geoQuery.removeAllListeners();
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
 
-        // Update the value of mRequestingLocationUpdates from the Bundle.
-        if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-            mRequestingLocationUpdates = savedInstanceState.getBoolean(
-                    REQUESTING_LOCATION_UPDATES_KEY);
-        }
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                Log.i("firebase called","onKeyEntered");
+                //For loop to check if marker exists alr
+                for(Marker markerIt:markerList){
+                    if(markerIt.getTag().equals(key)){
+                        return;
+                    }
+                }
+                LatLng driverLocation = new LatLng(location.latitude,location.longitude);
 
-    }
+                Marker mDriverMarker = mMap.addMarker(new MarkerOptions()
+                        .position(driverLocation)
+                );
 
-    protected void startIntentService() {
-//        Log.i("Called", "startIntentService()");
-//        mResultReceiver =  new AddressResultReceiver(new Handler());
-//        Intent intent = new Intent(getContext(), FetchAddressIntentService.class);
-//        intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, mResultReceiver);
-//        intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, mLastLocation);
-//        getContext().startService(intent);
-    }
+                //Tags the id of the driver in the marker, Remove after testing
+                mDriverMarker.setTag(key);
 
-    class AddressResultReceiver extends ResultReceiver {
-        public AddressResultReceiver(Handler handler) {
-            super(handler);
-        }
+                markerList.add(mDriverMarker);
 
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            Log.i("Called","AddressResultReceiver");
-            if (resultData == null) {
-                return;
+
             }
 
-            // Display the address string
-            // or an error message sent from the intent service.
-            String mAddressOutput = resultData.getString(FetchAddressIntentService.Constants.RESULT_DATA_KEY);
-            Log.i("Called mAddress",mAddressOutput);
-            if (mAddressOutput == null) {
-                mAddressOutput = "";
-            } else {
-                currentLocation.setText(mAddressOutput);
+            @Override
+            public void onKeyExited(String key) {
+                Log.i("firebase called","onKeyExited");
+                for(Marker markerIt : markerList){
+                    if(markerIt.getTag().equals(key)){
+                        markerIt.remove();;
+                        markerList.remove(markerIt);
+                        return;
+                    }
+                }
             }
 
-        }
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+                Log.i("firebase called","onKeyMoved");
+                for(Marker markerIt : markerList){
+                    if(markerIt.getTag().equals(key)){
+                         markerIt.setPosition(new LatLng(location.latitude,location.longitude));
+                    }
+                }
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                Log.i("firebase called","onGeoQueryReady()");
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                Log.i("firebase called",error.toString());
+            }
+        });
+    }
+
+    private void getClosestDriver() {
+        DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("availableDriver");
+        pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
+        GeoFire geoFire = new GeoFire(driverLocation);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
+        geoQuery.removeAllListeners();
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                if (!driverFound) {
+                    driverFound = true;
+
+                    driverFoundId = key;
+
+
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                    View mView = getLayoutInflater().inflate(R.layout.dialog_found_driver, null);
+
+                    mBuilder.setView(mView);
+                    final AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+                }
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                if (!driverFound) {
+                    radius++;
+                    getClosestDriver();
+                }
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
     }
 }
 
