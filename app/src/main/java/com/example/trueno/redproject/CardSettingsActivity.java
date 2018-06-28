@@ -18,7 +18,7 @@ public class CardSettingsActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CardSettingsActivity.super.onBackPressed();
+            CardSettingsActivity.super.onBackPressed();
             }
         });
     }

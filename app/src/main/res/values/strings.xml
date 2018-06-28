@@ -23,8 +23,8 @@
         <item>Incurred charges</item>
         <item>The service provider was rude</item>
         <item>The service provider was unprofessional</item>
-        <item>Others</item>
         <item>Driver requested cash payment</item>
+        <item>Others</item>
     </string-array>
 
 </resources>

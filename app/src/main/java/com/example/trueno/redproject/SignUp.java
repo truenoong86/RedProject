@@ -101,10 +101,9 @@ public class SignUp extends AppCompatActivity {
         String userPassword = editTextPassword.getText().toString();
         String userConfirmPassword = editTextConfirmPassword.getText().toString();
 
-        User user =new User(etName.getText().toString(), etCountryCode.getText().toString() , etPhone.getText().toString(), userEmail, etNumber.getText().toString(), etModel.getText().toString(),etTyre.getText().toString(), etInsurance.getText().toString(), etYear.getText().toString());
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        String id = currentUser.getUid();
-        userListRef.child(id).setValue(user);
+        String userName = etName.getText().toString();
+
+
 
             firebaseAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -113,7 +112,11 @@ public class SignUp extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                            User user =new User(etName.getText().toString(), etCountryCode.getText().toString() , etPhone.getText().toString(), editTextUserEmail.getText().toString(), etNumber.getText().toString(), etModel.getText().toString(),etTyre.getText().toString(), etInsurance.getText().toString(), etYear.getText().toString());
+
+                            String id = currentUser.getUid();
+                            userListRef.child(id).setValue(user);
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                         } else {
                             // If sign in fails, display a message to the user.
@@ -125,6 +128,8 @@ public class SignUp extends AppCompatActivity {
                         // ...
                     }
                 });
+
+
     }
 
     private void updateUI(FirebaseUser user) {
