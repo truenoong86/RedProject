@@ -102,12 +102,11 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     LinearLayout cashLayout, remarksLayout, promoLayout;
     AutoCompleteTextView currentLocation, destination;
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard;
-    Button btnProceed;
+    Button btnProceed, btnConfirmBooking;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
     private static final LatLngBounds SINGAPORE = new LatLngBounds(
             new LatLng(-35.0, 138.58), new LatLng(-34.9, 138.61));
-
 
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
@@ -122,9 +121,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     boolean getDriversAroundStarted = false;
 
-
     List<Marker>markerList = new ArrayList<Marker>();
-
 
     public Home() {
         // Required empty public constructor
@@ -170,8 +167,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         "Others"
                 };
 
-
-
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                         android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
@@ -188,8 +183,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                     }
                 });
-
-
 
                 dialog.show();
             }
@@ -233,8 +226,19 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_confirm_booking, null);
 
                 mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
+                final AlertDialog dialog = mBuilder.create();
                 dialog.show();
+
+                btnConfirmBooking = dialog.findViewById(R.id.btnConfirmBooking);
+
+                btnConfirmBooking.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getClosestDriver();
+
+                        dialog.dismiss();
+                    }
+                });
             }
         });
 
@@ -453,17 +457,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         layoutParams.setMargins(0, 0, 30, 30);
 
-//        Criteria criteria = new Criteria();
-//        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//        String provider = locationManager.getBestProvider(criteria, false);
-//        Location location = locationManager.getLastKnownLocation(provider);
-//        float la = (float) location.getLatitude() ;
-//        float lo = (float) location.getLongitude();
-//
-//        LatLng TutorialsPoint = new LatLng(la, lo);
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(TutorialsPoint));
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
-
         init();
     }
 
@@ -582,8 +575,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
-
     }
 
     @Override
@@ -675,8 +666,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         super.onResume();
     }
 
-
-
     @Override
     public void onPause() {
         super.onPause();
@@ -727,8 +716,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 mDriverMarker.setTag(key);
 
                 markerList.add(mDriverMarker);
-
-
             }
 
             @Override
@@ -766,5 +753,3 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         });
     }
 }
-
-
