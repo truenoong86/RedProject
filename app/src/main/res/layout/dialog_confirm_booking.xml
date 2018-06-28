@@ -96,6 +96,7 @@
             android:text="If towing requires additional arrangements due to abnormal circumstances including but not limited to overturned car, stuck in" />
 
         <Button
+            android:id="@+id/btnConfirmBooking"
             android:layout_width="297dp"
             android:layout_height="51dp"
             android:layout_marginTop="20dp"
