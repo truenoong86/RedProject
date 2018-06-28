@@ -601,7 +601,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         DatabaseReference driversLocation = FirebaseDatabase.getInstance().getReference().child("availableDriver");
 
         GeoFire geoFire = new GeoFire(driversLocation);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude()),10000);
+        LatLng userPos = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userPos.latitude,userPos.longitude),10000);
         geoQuery.removeAllListeners();
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
 
