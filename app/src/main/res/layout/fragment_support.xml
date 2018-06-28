@@ -14,8 +14,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Leave us a feedback"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="15dp"
+            android:text="Support" />
 
         <Spinner
             android:id="@+id/feedbacks_spinner"
@@ -24,24 +24,25 @@
             android:layout_marginTop="15dp"/>
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/etMessage"
             android:layout_width="317dp"
             android:layout_height="150dp"
-            android:inputType="textMultiLine"
+            android:layout_marginTop="15dp"
             android:background="#EBEBEB"
-            android:hint="Start typing here"
             android:gravity="top"
+            android:hint="Start typing here"
+            android:inputType="textMultiLine"
             android:padding="10dp"
-            android:textSize="14dp"
-            android:layout_marginTop="15dp"/>
+            android:textSize="14dp" />
 
         <Button
+            android:id="@+id/btnSubmit"
             android:layout_width="308.73dp"
             android:layout_height="45dp"
+            android:layout_marginTop="20dp"
             android:background="#6E8F00"
             android:text="Submit"
-            android:layout_marginTop="20dp"
-            android:textColor="#fff"/>
+            android:textColor="#fff" />
 
         <TextView
             android:layout_width="wrap_content"
