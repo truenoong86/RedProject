@@ -72,20 +72,25 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,6 +106,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     private int radius = 1;
     private Boolean driverFound = false;
     private String driverFoundId;
+    private Marker mDriverMarker;
+    android.support.v7.widget.Toolbar close;
     LatLng pickupLocation;
     ListView lvServices;
     Location mLastLocation;
@@ -156,7 +163,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         //update saved values
         updateValuesFromBundle(savedInstanceState);
-
 
         singleLineCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,14 +283,15 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     driverFound = true;
                     driverFoundId = key;
 
-                    DatabaseReference d
+                    Log.d("Found driver", key);
 
-                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
-                    View mView = getLayoutInflater().inflate(R.layout.dialog_found_driver, null);
+                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("user").child("driver").child(driverFoundId);
+                    String passengerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    HashMap map = new HashMap();
+                    map.put("passengerRideId", passengerId);
+                    driverRef.updateChildren(map);
 
-                    mBuilder.setView(mView);
-                    final AlertDialog dialog = mBuilder.create();
-                    dialog.show();
+                    getDriverLocation();
                 }
             }
 
@@ -302,12 +309,72 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             public void onGeoQueryReady() {
                 if (!driverFound) {
                     radius++;
+                    Log.d("testradius: ",radius+"");
                     getClosestDriver();
                 }
             }
 
             @Override
             public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getDriverLocation() {
+        DatabaseReference driverLocationRef = FirebaseDatabase.getInstance().getReference().child("availableDriver").child(driverFoundId).child("l");
+        driverLocationRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    List<Object> map = (List<Object>) dataSnapshot.getValue();
+                    double locationLat = 0;
+                    double locationLng = 0;
+
+                    if(map.get(0) != null) {
+                        locationLat = Double.parseDouble(map.get(0).toString());
+                    }
+                    if(map.get(1) != null) {
+                        locationLng = Double.parseDouble(map.get(1).toString());
+                    }
+
+                    LatLng driverLatLng = new LatLng(locationLat, locationLng);
+                    if(mDriverMarker != null) {
+                        mDriverMarker.remove();
+                    }
+
+                    Location loc1 = new Location("");
+                    loc1.setLatitude(pickupLocation.latitude);
+                    loc1.setLongitude(pickupLocation.longitude);
+
+                    Location loc2 = new Location("");
+                    loc2.setLatitude(driverLatLng.latitude);
+                    loc2.setLongitude(driverLatLng.longitude);
+
+                    float distance = loc1.distanceTo(loc2);
+
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                    View mView = getLayoutInflater().inflate(R.layout.dialog_found_driver, null);
+
+                    mBuilder.setView(mView);
+                    final AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+
+                    close = (android.support.v7.widget.Toolbar) dialog.findViewById(R.id.close);
+
+                    close.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
