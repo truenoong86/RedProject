@@ -35,16 +35,17 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/toolbarLayout">
-        
+
         <EditText
+            android:id="@+id/etCardNumber"
             android:layout_width="318dp"
             android:layout_height="45dp"
             android:background="@drawable/edit_text_background"
+            android:hint="Card Number"
+            android:paddingEnd="5dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:hint="Card Number"/>
+            android:paddingStart="5dp" />
 
         <LinearLayout
             android:layout_width="318dp"

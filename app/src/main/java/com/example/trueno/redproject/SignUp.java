@@ -12,21 +12,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.trueno.redproject.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUp extends AppCompatActivity {
     public static final String TAG = "SignUp.java";
 
     private android.support.v7.widget.Toolbar back;
     public TextView tvTerms, tvPrivacyPolicy;
-    public EditText editTextUserEmail, editTextPassword, editTextConfirmPassword;
+    public EditText editTextUserEmail, editTextPassword, editTextConfirmPassword, etCountryCode, etPhone, etModel, etNumber, etYear, etTyre,etInsurance, etName;
     public Button buttonSignUp;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference userListRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,11 @@ public class SignUp extends AppCompatActivity {
         
         firebaseAuth = FirebaseAuth.getInstance();
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        userListRef = firebaseDatabase.getReference("/user/passenger");
+
+
+
         back = (android.support.v7.widget.Toolbar) findViewById(R.id.back);
         tvTerms = (TextView) findViewById(R.id.tvTerms);
         tvPrivacyPolicy = (TextView) findViewById(R.id.tvPrivacyPolicy);
@@ -43,6 +53,16 @@ public class SignUp extends AppCompatActivity {
         editTextPassword = (EditText) findViewById(R.id.etUserPassword);
         editTextConfirmPassword = (EditText) findViewById(R.id.etUserConfirmPassword);
         buttonSignUp = (Button) findViewById(R.id.btnSignUp);
+
+        etName = findViewById(R.id.etName);
+        etCountryCode = findViewById(R.id.etCountryCode);
+        etPhone = findViewById(R.id.etPhoneNumber);
+        etModel = findViewById(R.id.etVehicleModel);
+        etNumber = findViewById(R.id.etVehicleNumber);
+        etYear = findViewById(R.id.etYearOfManufacture);
+        etTyre = findViewById(R.id.etTyreSize);
+        etInsurance = findViewById(R.id.etInsurance);
+
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +101,11 @@ public class SignUp extends AppCompatActivity {
         String userPassword = editTextPassword.getText().toString();
         String userConfirmPassword = editTextConfirmPassword.getText().toString();
 
-        firebaseAuth.createUserWithEmailAndPassword(userEmail, userPassword)
+        User user =new User(etName.getText().toString(), etCountryCode.getText().toString() , etPhone.getText().toString(), userEmail, etNumber.getText().toString(), etModel.getText().toString(),etTyre.getText().toString(), etInsurance.getText().toString(), etYear.getText().toString());
+
+        userListRef.push().setValue(user);
+
+            firebaseAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

@@ -251,6 +251,7 @@
                             android:src="@mipmap/no_image" />
 
                         <TextView
+                            android:id="@+id/singleLineCardTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
@@ -260,6 +261,7 @@
                             android:textSize="14dp" />
 
                         <TextView
+                            android:id="@+id/singleLineCardPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="500"

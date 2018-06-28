@@ -41,7 +41,7 @@
             tools:replace="android:value" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB1VuVb0Q_lQpNLVwuAeeZq148LXROcmZ0" />
+            android:value="AIzaSyB9-Ffz2pS0ekVlFR29VJnY6DtYDYXik60" />
 
         <uses-library
             android:name="com.google.android.maps"
@@ -73,6 +73,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".services.FetchAddressIntentService"
+            android:exported="false"/>
+
         <activity android:name=".ForgetPasswordActivity" />
         <activity android:name=".TermsActivity" />
         <activity android:name=".PrivacyPolicyActivity" />
