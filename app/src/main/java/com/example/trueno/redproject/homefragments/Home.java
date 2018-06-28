@@ -409,6 +409,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mMap = googleMap;
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i("error","No permissions");
             return;
         }
         buildGoogleApiClient();
@@ -638,6 +639,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     }
 
     private void startLocationUpdates() {
+        Log.i("Called","startLocationUpdates()");
         mRequestingLocationUpdates = true;
         if ( (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                 || (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
@@ -649,6 +651,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     }
 
     private void stopLocationUpdates() {
+        Log.i("Called","stopLocationUpdates()");
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
 
@@ -719,7 +722,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-
+            Log.i("Called","AddressResultReceiver");
             if (resultData == null) {
                 return;
             }

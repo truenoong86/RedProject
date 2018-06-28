@@ -102,8 +102,9 @@ public class SignUp extends AppCompatActivity {
         String userConfirmPassword = editTextConfirmPassword.getText().toString();
 
         User user =new User(etName.getText().toString(), etCountryCode.getText().toString() , etPhone.getText().toString(), userEmail, etNumber.getText().toString(), etModel.getText().toString(),etTyre.getText().toString(), etInsurance.getText().toString(), etYear.getText().toString());
-
-        userListRef.push().setValue(user);
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        String id = currentUser.getUid();
+        userListRef.child(id).setValue(user);
 
             firebaseAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
