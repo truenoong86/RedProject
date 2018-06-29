@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingBottom="30dp">
+        android:paddingBottom="20dp">
 
         <RelativeLayout
             android:id="@+id/toolbarLayout"
