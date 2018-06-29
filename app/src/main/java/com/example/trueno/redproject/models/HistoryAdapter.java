@@ -2,6 +2,7 @@ package com.example.trueno.redproject.models;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +25,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolders> {
     @NonNull
     @Override
     public HistoryViewHolders onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history, null, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history, parent, false);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+
         layoutView.setLayoutParams(lp);
         HistoryViewHolders rcv = new HistoryViewHolders(layoutView);
 

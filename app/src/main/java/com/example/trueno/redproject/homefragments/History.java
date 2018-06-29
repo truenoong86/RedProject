@@ -63,11 +63,6 @@ public class History extends Fragment {
         getUserHistory();
 
 
-        History obj = new History();
-        for(int i=0; i<100; i++){
-            resultsHistory.add(obj);
-        }
-
         mHistoryAdapter.notifyDataSetChanged();
 
 

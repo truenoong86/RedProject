@@ -630,6 +630,86 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 // Get the current location of the device and set the position of the map.
                 getDeviceLocation();
+
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                final DatabaseReference ref =  database.getReference().child("availableDriver");
+
+                //onChildAdded,onChildMoved,onChildChanged == Adding new availableDriver;
+                //onChildChanged = change long or lat of availableDriver;
+                //onChildRemoved = removing data
+
+
+                ref.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.i("onChildAdded",dataSnapshot.toString());
+                        if(dataSnapshot.exists()){
+
+                            double locationLat = 0;
+                            double locationLng = 0;
+
+                            if(dataSnapshot.child("l").child("0").getValue() != null) {
+                                locationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
+                            }
+                            if(dataSnapshot.child("l").child("1").getValue() != null) {
+                                locationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
+                            }
+
+                            Log.i("LatLng",locationLat+" "+locationLng);
+
+                            final GeoFire geoFire = new GeoFire(ref);
+                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(locationLat, locationLng));
+//
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.i("onChildChanged",dataSnapshot.toString());
+
+                        if(dataSnapshot.exists()){
+
+                            String changedKey = dataSnapshot.getKey();
+
+                            double newLocationLat = 0;
+                            double newLocationLng = 0;
+
+                            if(dataSnapshot.child("l").child("0").getValue() != null) {
+                                newLocationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
+                            }
+                            if(dataSnapshot.child("l").child("1").getValue() != null) {
+                                newLocationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
+                            }
+
+                            Log.i("LatLng",newLocationLat+" "+newLocationLng);
+
+                            final GeoFire geoFire = new GeoFire(ref);
+                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(newLocationLat, newLocationLng));
+//
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                        Log.i("onChildRemoved",dataSnapshot.toString());
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.i("onChildMoved",dataSnapshot.toString());
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.i("onCancelled","cancelled");
+
+                    }
+                });
+
+
             }
         });
 
@@ -758,7 +838,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                                     if(!getDriversAroundStarted){
                                         displayDriversAround();
                                         displayCurrentDriversAround();
+
                                     }
+                                } else {
+                                    Log.i("mLastLocation","mLastLocation is null");
                                 }
                             }
                         });
@@ -909,6 +992,34 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        DatabaseReference idRef = (FirebaseDatabase.getInstance().getReference("availableDriver"));
+                        Log.i("idRef",snapshot.getValue().toString());
+
+                        if(snapshot.exists()){
+
+                            double locationLat = 0;
+                            double locationLng = 0;
+
+                            if(snapshot.child("l").child("0").getValue() != null) {
+                                locationLat = Double.parseDouble(snapshot.child("l").child("0").getValue().toString());
+                            }
+                            if(snapshot.child("l").child("1").getValue() != null) {
+                                locationLng = Double.parseDouble(snapshot.child("l").child("1").getValue().toString());
+                            }
+
+                            LatLng completeLatLng = new LatLng(locationLat,locationLng);
+                            Log.i("LatLng",locationLat+" "+locationLng);
+
+                            final GeoFire geoFire = new GeoFire(idRef);
+                             geoFire.setLocation(snapshot.getKey(), new GeoLocation(locationLat, locationLng));
+//                            mMap.addMarker(new MarkerOptions()`
+//                                    .position(completeLatLng)
+//                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+//
+//                            );
+                        }
+
+
                         Log.i("idRef",snapshot.getValue().toString());
 
                     }
