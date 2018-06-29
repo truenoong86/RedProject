@@ -88,12 +88,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private int radius = 1;
+    private int radius = 10000;
     private Boolean driverFound = false;
     private String driverFoundId;
     private Marker mDriverMarker;
     android.support.v7.widget.Toolbar close;
     LatLng pickupLocation;
+    LatLng userLocation;
     ListView lvServices;
     Location mLastLocation;
     LocationRequest mLocationRequest;
@@ -258,6 +259,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+                Log.i("firebase called11","onKeyEntered");
                 if (!driverFound) {
                     driverFound = true;
                     driverFoundId = key;
@@ -286,6 +288,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
             @Override
             public void onGeoQueryReady() {
+
+                Log.i("firebase called11","onGeoQueryReady()");
                 if (!driverFound) {
                     radius++;
                     Log.d("testradius: ",radius+"");
@@ -538,6 +542,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                                     if(!getDriversAroundStarted){
                                         displayDriversAround();
+                                        displayCurrentDriversAround();
                                     }
                                 }
                             }
@@ -685,16 +690,56 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             mGoogleApiClient.disconnect();
         }
     }
+
+    private void displayCurrentDriversAround(){
+        FirebaseDatabase.getInstance().getReference().child("availableDriver")
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                        User user = snapshot.getValue(User.class);
+//                        System.out.println(user.email);
+                        //DatabaseReference idRef = (FirebaseDatabase.getInstance().getReference("availableDriver"));
+                        Log.i("idRef",snapshot.getValue().toString());
+//                        List<Object> map = (List<Object>) idRef.child("l");
+//                        double locationLat = 0;
+//                        double locationLng = 0;
+//
+//                        if(map.get(0) != null) {
+//                            locationLat = Double.parseDouble(map.get(0).toString());
+//                        }
+//                        if(map.get(1) != null) {
+//                            locationLng = Double.parseDouble(map.get(1).toString());
+//                        }
+//
+//                        LatLng completeLatLng = new LatLng(locationLat,locationLng);
+//                        Log.i("LatLng",locationLat+" "+locationLng);
+//
+//                        mMap.addMarker(new MarkerOptions()
+//                                .position(completeLatLng)
+//                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+//
+//                        );
+
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+    }
     private void displayDriversAround(){
 
         Log.i("called","started displayDriversAround");
         getDriversAroundStarted = true;
-        DatabaseReference driversLocation = FirebaseDatabase.getInstance().getReference().child("availableDriver");
 
-        GeoFire geoFire = new GeoFire(driversLocation);
-        LatLng userPos = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userPos.latitude,userPos.longitude),10000);
-        geoQuery.removeAllListeners();
+        DatabaseReference driverLocationRef = FirebaseDatabase.getInstance().getReference("/availableDriver");
+        userLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
+        final GeoFire geoFire = new GeoFire(driverLocationRef);
+        geoFire.setLocation("xing chuan", new GeoLocation(1.334858, 103.884722));
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userLocation.latitude, userLocation.longitude), 1000);
+
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
 
             @Override
@@ -710,6 +755,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 Marker mDriverMarker = mMap.addMarker(new MarkerOptions()
                         .position(driverLocation)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 );
 
                 //Tags the id of the driver in the marker, Remove after testing
@@ -749,6 +795,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             @Override
             public void onGeoQueryError(DatabaseError error) {
                 Log.i("firebase called",error.toString());
+
             }
         });
     }

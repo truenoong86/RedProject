@@ -65,15 +65,16 @@
                     android:gravity="left" />
 
                 <EditText
+                    android:id="@+id/etName"
                     android:layout_width="310dp"
                     android:layout_height="35dp"
-                    android:background="@drawable/rounded_edit_text_background"
-                    android:textSize="14dp"
                     android:layout_marginTop="5dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:paddingEnd="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingStart="5dp"
-                    android:paddingEnd="5dp" />
+                    android:textSize="14dp" />
 
                 <TextView
                     android:layout_width="310dp"
@@ -85,15 +86,16 @@
                     android:layout_marginTop="20dp" />
 
                 <EditText
+                    android:id="@+id/etCountry"
                     android:layout_width="310dp"
                     android:layout_height="35dp"
-                    android:background="@drawable/rounded_edit_text_background"
-                    android:textSize="14dp"
                     android:layout_marginTop="5dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:paddingEnd="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingStart="5dp"
-                    android:paddingEnd="5dp" />
+                    android:textSize="14dp" />
 
                 <TextView
                     android:layout_width="310dp"
@@ -105,15 +107,16 @@
                     android:layout_marginTop="20dp" />
 
                 <EditText
+                    android:id="@+id/etPhone"
                     android:layout_width="310dp"
                     android:layout_height="35dp"
-                    android:background="@drawable/rounded_edit_text_background"
-                    android:textSize="14dp"
                     android:layout_marginTop="5dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:paddingEnd="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingStart="5dp"
-                    android:paddingEnd="5dp" />
+                    android:textSize="14dp" />
 
                 <TextView
                     android:layout_width="310dp"
@@ -125,15 +128,16 @@
                     android:layout_marginTop="20dp" />
 
                 <EditText
+                    android:id="@+id/etEmail"
                     android:layout_width="310dp"
                     android:layout_height="35dp"
-                    android:background="@drawable/rounded_edit_text_background"
-                    android:textSize="14dp"
                     android:layout_marginTop="5dp"
+                    android:background="@drawable/rounded_edit_text_background"
+                    android:paddingEnd="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingStart="5dp"
-                    android:paddingEnd="5dp" />
+                    android:textSize="14dp" />
 
                 <TextView
                     android:layout_width="310dp"
@@ -145,15 +149,16 @@
                     android:layout_marginTop="20dp" />
 
                 <EditText
+                    android:id="@+id/etVehicleNum"
                     android:layout_width="310dp"
                     android:layout_height="35dp"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/rounded_edit_text_background"
-                    android:textSize="14dp"
+                    android:paddingEnd="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingStart="5dp"
-                    android:paddingEnd="5dp" />
+                    android:textSize="14dp" />
                 
                 <LinearLayout
                     android:layout_width="310dp"
