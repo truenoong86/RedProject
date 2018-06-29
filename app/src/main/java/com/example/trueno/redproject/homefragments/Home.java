@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -50,7 +51,6 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -84,10 +84,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static java.lang.Double.parseDouble;
@@ -104,6 +104,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     private Boolean driverFound = false;
     private Boolean requestBol = false;
     private String driverFoundId;
+    private int promoDeduction = 0;
     private Marker mDriverMarker;
     private DatabaseReference requestListRef;
     android.support.v7.widget.Toolbar close;
@@ -117,9 +118,9 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     LinearLayout cashLayout, remarksLayout, promoLayout, findingDriver;
     AutoCompleteTextView acCurrentLocation, acDestination;
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard;
-    TextView tvDriverName, tvViewDetails, tvServiceType, tvServicePrice;
+    TextView tvDriverName, tvViewDetails, tvServiceType, tvServicePrice, tvPromo, tvRemarks;
     EditText etRemarks, etPromo;
-    Button btnProceed, btnConfirmBooking;
+    Button btnProceed, btnConfirmBooking, btnCancel, btnConfirm;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
     private static final LatLngBounds SINGAPORE = new LatLngBounds(
@@ -165,6 +166,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         tvServiceType = (TextView) view.findViewById(R.id.tvServiceType);
         tvServicePrice = (TextView) view.findViewById(R.id.tvServicePrice);
+        tvRemarks = (TextView) view.findViewById(R.id.tvRemarks);
+        tvPromo = (TextView) view.findViewById(R.id.tvPromo);
         acCurrentLocation = (AutoCompleteTextView) view.findViewById(R.id.currentLocation);
         acDestination = (AutoCompleteTextView) view.findViewById(R.id.destination);
         cashLayout = (LinearLayout) view.findViewById(R.id.cashLayout);
@@ -227,11 +230,28 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_remarks, null);
 
                 mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
+                final AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
+                close = (android.support.v7.widget.Toolbar) dialog.findViewById(R.id.close);
                 etRemarks = (EditText) dialog.findViewById(R.id.etRemarks);
-                String remarks = etRemarks.getText().toString();
+                btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
+                btnConfirm = (Button) dialog.findViewById(R.id.btnConfirm);
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tvRemarks.setText(etRemarks.getText().toString());
+                        dialog.dismiss();
+                    }
+                });
             }
         });
 
@@ -242,11 +262,36 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 View mView = getLayoutInflater().inflate(R.layout.dialog_promo, null);
 
                 mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
+                final AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
+                btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
+                btnConfirm = (Button) dialog.findViewById(R.id.btnConfirm);
                 etPromo = (EditText) dialog.findViewById(R.id.etPromo);
-                String promo = etPromo.getText().toString();
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tvPromo.setText(etPromo.getText().toString());
+
+                        if (etPromo.getText().toString() == "5OFF") {
+                            promoDeduction = 5;
+                        } else if (etPromo.getText().toString() == "10OFF") {
+                            promoDeduction = 10;
+                        } else {
+                            Toast.makeText(getContext(), "Invalid coupon", Toast.LENGTH_SHORT).show();
+                        }
+
+                        dialog.dismiss();
+                    }
+                });
             }
         });
 
@@ -314,8 +359,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     HashMap map = new HashMap();
                     map.put("passengerRideId", passengerId);
                     driverRef.updateChildren(map);
+                    try {
+                        getDriverLocation();
+                    } catch(MalformedURLException e) {
 
-                    getDriverLocation();
+                    } catch (IOException e) {
+
+                    }
                 }
             }
 
@@ -345,13 +395,22 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         });
     }
 
-    private void getDriverLocation() {
+    private void getDriverLocation() throws IOException {
         Log.d("getDriverLocation", driverFoundId);
 
         requestListRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId).child("l");
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest");
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference passUserToDriverRef = FirebaseDatabase.getInstance().getReference().child("user").child("passenger");
+
+        String location = acDestination.getText().toString();
+        Geocoder gc = new Geocoder(getContext());
+        List<Address> list = gc.getFromLocationName(location, 1);
+        Address add = list.get(0);
+        String locality = add.getLocality();
+
+        final double destinationLat = add.getLatitude();
+        final double destinationLng = add.getLongitude();
 
         passUserToDriverRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -364,10 +423,14 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 Double pickupLatitude = mLastLocation.getLatitude();
                 Double pickupLongitude = mLastLocation.getLongitude();
                 String destinationName = acDestination.getText().toString();
+                Double destinationLatitude = destinationLat;
+                Double destinationLongitude = destinationLng;
                 String serviceType = tvServiceType.getText().toString();
                 Double servicePrice = parseDouble(tvServicePrice.getText().toString());
+                String remarks = tvRemarks.getText().toString();
+                String promo = tvPromo.getText().toString();
 
-                PassengerRequest insertPassengerRequest = new PassengerRequest(name, vehicleNumber, vehicleModel, pickupName, pickupLatitude, pickupLongitude, destinationName, serviceType, servicePrice);
+                PassengerRequest insertPassengerRequest = new PassengerRequest(name, vehicleNumber, vehicleModel, pickupName, pickupLatitude, pickupLongitude, destinationName, destinationLatitude, destinationLongitude, serviceType, servicePrice, remarks, promo);
                 mRef.child(driverFoundId).setValue(insertPassengerRequest);
             }
 
@@ -756,11 +819,9 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         }
     };
 
-
-
-    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback  = new ResultCallback<PlaceBuffer>() {
         @Override
-        public void onResult(@NonNull PlaceBuffer places) {
+        public void onResult (@NonNull PlaceBuffer places) {
             Log.i("Called","ResultCallback");
         if(!places.getStatus().isSuccess()){
             places.release();
@@ -840,7 +901,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         userLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
         final GeoFire geoFire = new GeoFire(driverLocationRef);
-        geoFire.setLocation("BDBZTqD7YFeedQgCy9DzIIYpPht1", new GeoLocation(1.334858, 103.884722));
+        geoFire.setLocation("iTCQkWMjqtSAt6ZER6R39tnC6xs1", new GeoLocation(1.334858, 103.884722));
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userLocation.latitude, userLocation.longitude), 1000);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
@@ -967,6 +1028,4 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
         getContext().startService(intent);
     }
-
-
 }

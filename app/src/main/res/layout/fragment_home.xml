@@ -445,6 +445,18 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tvRemarks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tvPromo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
         </RelativeLayout>
 
     </LinearLayout>

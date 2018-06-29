@@ -8,14 +8,18 @@ public class PassengerRequest {
     private Double pickupLatitude;
     private Double pickupLongitude;
     private String destinationName;
+    private Double destinationLatitude;
+    private Double destinationLongitude;
     private String serviceType;
     private Double price;
+    private String remarks;
+    private String promo;
 
     public PassengerRequest() {
 
     }
 
-    public PassengerRequest(String name, String vehicleNumber, String vehicleModel, String pickupName, Double pickupLatitude, Double pickupLongitude, String destinationName, String serviceType, Double price) {
+    public PassengerRequest(String name, String vehicleNumber, String vehicleModel, String pickupName, Double pickupLatitude, Double pickupLongitude, String destinationName, Double destinationLatitude, Double destinationLongitude, String serviceType, Double price, String remarks, String promo) {
         this.name = name;
         this.vehicleNumber = vehicleNumber;
         this.vehicleModel = vehicleModel;
@@ -23,8 +27,12 @@ public class PassengerRequest {
         this.pickupLatitude = pickupLatitude;
         this.pickupLongitude = pickupLongitude;
         this.destinationName = destinationName;
+        this.destinationLatitude = destinationLatitude;
+        this.destinationLongitude = destinationLongitude;
         this.serviceType = serviceType;
         this.price = price;
+        this.remarks = remarks;
+        this.promo = promo;
     }
 
     public String getName() {
@@ -79,6 +87,26 @@ public class PassengerRequest {
         return destinationName;
     }
 
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public Double getDestinationLatitude() {
+        return destinationLatitude;
+    }
+
+    public void setDestinationLatitude(Double destinationLatitude) {
+        this.destinationLatitude = destinationLatitude;
+    }
+
+    public Double getDestinationLongitude() {
+        return destinationLongitude;
+    }
+
+    public void setDestinationLongitude(Double destinationLongitude) {
+        this.destinationLongitude = destinationLongitude;
+    }
+
     public String getServiceType() {
         return serviceType;
     }
@@ -95,7 +123,19 @@ public class PassengerRequest {
         this.price = price;
     }
 
-    public void setDestinationName(String destinationName) {
-        this.destinationName = destinationName;
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getPromo() {
+        return promo;
+    }
+
+    public void setPromo(String promo) {
+        this.promo = promo;
     }
 }
