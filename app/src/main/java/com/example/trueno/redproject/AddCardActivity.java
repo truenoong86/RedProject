@@ -36,7 +36,6 @@ public class AddCardActivity extends AppCompatActivity {
     public TextView tvTerms;
     EditText etCardNo, etExpiry, etCVV;
     Button btnSubmit;
-    Switch swPrimary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class AddCardActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
         etCVV = findViewById(R.id.etCVV);
         etExpiry = findViewById(R.id.etExpiry);
-        swPrimary = findViewById(R.id.swPrimary);
 
         tvTerms.setText(Html.fromHtml("<u>Terms & Conditions</u> "));
 
@@ -96,18 +94,12 @@ public class AddCardActivity extends AppCompatActivity {
                                         Log.i("compare",expiryYear+" - "+cal.get(Calendar.YEAR));
                                         if(expiryYear>calYear){
                                             //success
-                                            if(swPrimary.isChecked()){
-                                                addCard(cardNo,cvvNo,expiryNo,true);
-                                            } else {
-                                                addCard(cardNo,cvvNo,expiryNo,false);
-                                            }
+                                            addCard(cardNo,cvvNo,expiryNo);
+
+
                                         } else if (expiryYear == calYear){
                                             if(expiryMonth > cal.get(Calendar.MONTH)){
-                                                if(swPrimary.isChecked()){
-                                                    addCard(cardNo,cvvNo,expiryNo,true);
-                                                } else {
-                                                    addCard(cardNo,cvvNo,expiryNo,false);
-                                                }
+                                                addCard(cardNo,cvvNo,expiryNo);
                                             } else {
                                                 Toast.makeText(AddCardActivity.this, "Card expired By Month", Toast.LENGTH_SHORT).show();
                                             }
@@ -142,40 +134,25 @@ public class AddCardActivity extends AppCompatActivity {
         });
     }
 
-    public void addCard(String getCard, String getCVV ,String getDate, Boolean primary){
+    public void addCard(String getCard, String getCVV ,String getDate){
+//        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference cardDetailsRef = database.getReference("/cardDetails");
+//        String passengerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//
+//        CardDetails cardDetails = new CardDetails(getCVV,getDate);
+//        cardDetailsRef.child(passengerId).child("others").child(getCard).setValue(cardDetails);
+//        Toast.makeText(getApplicationContext(),"Added Card",Toast.LENGTH_SHORT).show();
+//        finish();
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference cardDetailsRef = database.getReference("/cardDetails");
+        DatabaseReference passengerRef = database.getReference("/user").child("passenger");
         String passengerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if(primary){
-            cardDetailsRef.child(passengerId)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            User currUserProfile = dataSnapshot.getValue(com.example.trueno.redproject.models.User.class);
-//                            etName.setText(currUserProfile.getName());
-                            if(dataSnapshot.hasChild("primary")){
-                                //has existing primary card
-                            } else {
-                                //no primary card yet
-                            }
+        DatabaseReference cardDetailsRef = passengerRef.child(passengerId);
 
-                        }
+        CardDetails cardDetails = new CardDetails(getCard,getCVV,getDate);
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-
-
-        }else{
-            CardDetails cardDetails = new CardDetails(getCVV,getDate);
-            cardDetailsRef.child(passengerId).child("others").child(getCard).setValue(cardDetails);
-            Toast.makeText(getApplicationContext(),"Added Card",Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        cardDetailsRef.child("cardDetails").setValue(cardDetails);
+        finish();
 
     }
 }
