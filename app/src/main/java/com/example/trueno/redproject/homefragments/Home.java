@@ -26,9 +26,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,6 +42,7 @@ import com.example.trueno.redproject.R;
 import com.example.trueno.redproject.RideDetailsActivity;
 import com.example.trueno.redproject.models.PassengerRequest;
 import com.example.trueno.redproject.models.PlaceInfo;
+import com.example.trueno.redproject.models.Services;
 import com.example.trueno.redproject.services.FetchAddressIntentService;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -111,6 +114,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     LatLng pickupLocation;
     LatLng userLocation;
     ListView lvServices;
+    private List<Services> mServicesList;
     Location mLastLocation;
     LocationRequest mLocationRequest;
     Boolean mLocationPermissionGranted;
@@ -155,6 +159,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         // Required empty public constructor
     }
 
+    String[] services = {"Tow (Accident)", "Tow (Breakdown)", "Tyre Mending", "Spare Tyre Replacement", "Battery Jump Start", "Battery Replacement", "Others"};
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -163,6 +169,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapView = mapFragment.getView();
+
+        ListView servicesListView = (ListView) view.findViewById(R.id.lvServices);
 
         tvServiceType = (TextView) view.findViewById(R.id.tvServiceType);
         tvServicePrice = (TextView) view.findViewById(R.id.tvServicePrice);
@@ -177,6 +185,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         afterChoosingLocation = (android.support.v7.widget.CardView) view.findViewById(R.id.afterChoosingLocation);
         singleLineCard = (android.support.v7.widget.CardView) view.findViewById(R.id.singleLineCard);
         btnProceed = (Button) view.findViewById(R.id.btnProceed);
+        mServicesList = new ArrayList<>();
         mapFragment.getMapAsync(this);
 
         singleLineCard.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +198,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 lvServices = (ListView) mView.findViewById(R.id.lvServices);
 
-                final String[] values = new String[] { "Tow (Accident)",
+                final String[] services = new String[] { "Tow (Accident)",
                         "Tow (Breakdown)",
                         "Tyre Mending",
                         "Spare Tyre Replacement",
@@ -198,10 +207,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         "Others"
                 };
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                        android.R.layout.simple_list_item_1, android.R.id.text1, values);
-
-                lvServices.setAdapter(adapter);
+                lvServices.setAdapter(new CustomListAdapter(getContext(), services));
 
                 lvServices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -281,9 +287,9 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     public void onClick(View v) {
                         tvPromo.setText(etPromo.getText().toString());
 
-                        if (etPromo.getText().toString() == "5OFF") {
+                        if (tvPromo.getText().toString() == "5OFF") {
                             promoDeduction = 5;
-                        } else if (etPromo.getText().toString() == "10OFF") {
+                        } else if (tvPromo.getText().toString() == "10OFF") {
                             promoDeduction = 10;
                         } else {
                             Toast.makeText(getContext(), "Invalid coupon", Toast.LENGTH_SHORT).show();
@@ -335,6 +341,32 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         showKeyBoard();
 
         return view;
+    }
+
+    class CustomListAdapter extends ArrayAdapter<String> {
+        private Context mContext;
+        private List<Services> servicesList = new ArrayList<>();
+
+        public CustomListAdapter(Context context, String[] services) {
+            super(context, R.layout.custom_row, services);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater servicesInflater = LayoutInflater.from(getContext());
+            View customView = servicesInflater.inflate(R.layout.custom_row, parent, false);
+
+            String singleServiceItem = getItem(position);
+
+            TextView tvServices = (TextView) customView.findViewById(R.id.tvServices);
+            tvServices.setText(singleServiceItem);
+
+            TextView tvPrice = (TextView) customView.findViewById(R.id.tvPrice);
+//            tvPrice.setText(String.valueOf(singleServiceItem.getPrice()));
+
+            return customView;
+        }
     }
 
     private void getClosestDriver() {
