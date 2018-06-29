@@ -78,17 +78,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 
-
 public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private int radius = 10000;
+    private int radius = 1;
     private Boolean driverFound = false;
     private String driverFoundId;
     private Marker mDriverMarker;
@@ -103,6 +103,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     LinearLayout cashLayout, remarksLayout, promoLayout;
     AutoCompleteTextView currentLocation, destination;
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard;
+    TextView tvDriverName;
     Button btnProceed, btnConfirmBooking;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
@@ -155,9 +156,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
 
-
                 lvServices = (ListView) mView.findViewById(R.id.lvServices);
-
 
                 final String[] values = new String[] { "Tow (Accident)",
                         "Tow (Breakdown)",
@@ -181,7 +180,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         TextView tvTitle = getActivity().findViewById(R.id.singleLineCardTitle);
                         tvTitle.setText(lvServices.getItemAtPosition(i)+"");
                         dialog.dismiss();
-
                     }
                 });
 
@@ -232,6 +230,15 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 btnConfirmBooking = dialog.findViewById(R.id.btnConfirmBooking);
 
+                close = (android.support.v7.widget.Toolbar) dialog.findViewById(R.id.close);
+
+                close.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
                 btnConfirmBooking.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -252,7 +259,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     private void getClosestDriver() {
         DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("availableDriver");
         pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-
         GeoFire geoFire = new GeoFire(driverLocation);
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
         geoQuery.removeAllListeners();
@@ -344,6 +350,27 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     dialog.show();
 
                     close = (android.support.v7.widget.Toolbar) dialog.findViewById(R.id.close);
+
+                    DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("user").child("driver").child(driverFoundId);
+                    mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            tvDriverName = (TextView) dialog.findViewById(R.id.tvDriverName);
+
+                            if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
+                                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                                if (map.get("name")!=null) {
+                                    tvDriverName.setText(map.get("name").toString());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
                     close.setOnClickListener(new View.OnClickListener() {
                         @Override

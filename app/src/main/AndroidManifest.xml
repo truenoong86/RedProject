@@ -76,7 +76,7 @@
 
         <service
             android:name=".services.FetchAddressIntentService"
-            android:exported="false"/>
+            android:exported="false" />
 
         <activity android:name=".ForgetPasswordActivity" />
         <activity android:name=".TermsActivity" />
@@ -90,7 +90,8 @@
         <activity android:name=".CompletedActivity" />
         <activity android:name=".OnYourWayActivity" />
         <activity android:name=".RideDetailsActivity" />
-        <activity android:name=".CardSettingsActivity"></activity>
+        <activity android:name=".CardSettingsActivity" />
+        <activity android:name=".DriverDetailsActivity"></activity>
     </application>
 
 </manifest>
