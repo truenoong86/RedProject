@@ -84,25 +84,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="318dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Set as primary"
-                android:textColor="#000"
-                android:textSize="14dp"/>
-
-            <Switch
-                android:id="@+id/swPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
