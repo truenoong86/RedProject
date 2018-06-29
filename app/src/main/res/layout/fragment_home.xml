@@ -252,7 +252,7 @@
                             android:src="@mipmap/no_image" />
 
                         <TextView
-                            android:id="@+id/singleLineCardTitle"
+                            android:id="@+id/tvServiceType"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
@@ -262,12 +262,12 @@
                             android:textSize="14dp" />
 
                         <TextView
-                            android:id="@+id/singleLineCardPrice"
+                            android:id="@+id/tvServicePrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="500"
                             android:gravity="right"
-                            android:text="$261.01"
+                            android:text="261.01"
                             android:textColor="#000"
                             android:textSize="21dp" />
 

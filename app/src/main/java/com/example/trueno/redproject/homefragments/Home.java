@@ -6,12 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,7 +17,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trueno.redproject.CashActivity;
-import com.example.trueno.redproject.MainActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
 import com.example.trueno.redproject.RideDetailsActivity;
@@ -80,6 +76,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -92,6 +89,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static java.lang.Double.parseDouble;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -116,9 +115,9 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     Boolean mLocationPermissionGranted;
     View mapView;
     LinearLayout cashLayout, remarksLayout, promoLayout, findingDriver;
-    AutoCompleteTextView currentLocation, destination;
+    AutoCompleteTextView acCurrentLocation, acDestination;
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard;
-    TextView tvDriverName, tvViewDetails;
+    TextView tvDriverName, tvViewDetails, tvServiceType, tvServicePrice;
     EditText etRemarks, etPromo;
     Button btnProceed, btnConfirmBooking;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
@@ -128,14 +127,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
-    String REQUESTING_LOCATION_UPDATES_KEY = "location_update_key";
 
     GeoDataClient mGeoDataClient;
     PlaceDetectionClient mPlaceDetectionClient;
     FusedLocationProviderClient mFusedLocationProviderClient;
-
-    private LocationCallback mLocationCallback;
-    Boolean mRequestingLocationUpdates = false;
 
     boolean getDriversAroundStarted = false;
 
@@ -168,8 +163,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 .findFragmentById(R.id.map);
         mapView = mapFragment.getView();
 
-        currentLocation = (AutoCompleteTextView) view.findViewById(R.id.currentLocation);
-        destination = (AutoCompleteTextView) view.findViewById(R.id.destination);
+        tvServiceType = (TextView) view.findViewById(R.id.tvServiceType);
+        tvServicePrice = (TextView) view.findViewById(R.id.tvServicePrice);
+        acCurrentLocation = (AutoCompleteTextView) view.findViewById(R.id.currentLocation);
+        acDestination = (AutoCompleteTextView) view.findViewById(R.id.destination);
         cashLayout = (LinearLayout) view.findViewById(R.id.cashLayout);
         remarksLayout = (LinearLayout) view.findViewById(R.id.remarksLayout);
         promoLayout = (LinearLayout) view.findViewById(R.id.promoLayout);
@@ -206,9 +203,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 lvServices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        //Toast.makeText(getContext(), i+" "+, Toast.LENGTH_SHORT).show();
-                        //final View lineView = getLayoutInflater().inflate(R.layout.fragment_home, null);
-                        TextView tvTitle = getActivity().findViewById(R.id.singleLineCardTitle);
+                        TextView tvTitle = getActivity().findViewById(R.id.tvServiceType);
                         tvTitle.setText(lvServices.getItemAtPosition(i)+"");
                         dialog.dismiss();
                     }
@@ -281,27 +276,9 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     public void onClick(View v) {
                         findingDriver.setVisibility(View.VISIBLE);
 
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
                         pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
                         getClosestDriver();
-
-//                        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest");
-
-
-//                        Log.d("passengerRequest", FirebaseDatabase.getInstance().getReference().child("passengerRequest").toString());
-//                        Log.d("driverFoundId", driverFoundId+"");
-//                        Log.d("l", FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId).toString());
-
-//                        requestListRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId).child("l");
-//
-//                        String name = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(userId).child("name").toString();
-//                        String vehicleNumber = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(userId).child("vehicleNumber").toString();
-//                        String vehicleModel = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(userId).child("vehicleModel").toString();
-//
-//                        PassengerRequest passengerRequest = new PassengerRequest(name, vehicleNumber, vehicleModel);
-//                        mRef.child(driverFoundId).setValue(passengerRequest);
 
                         dialog.dismiss();
                     }
@@ -309,7 +286,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             }
         });
 
-        destination.requestFocus();
+        acDestination.requestFocus();
         showKeyBoard();
 
         return view;
@@ -339,8 +316,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     driverRef.updateChildren(map);
 
                     getDriverLocation();
-
-
                 }
             }
 
@@ -374,21 +349,48 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         Log.d("getDriverLocation", driverFoundId);
 
         requestListRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId).child("l");
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest");
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest");
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference passUserToDriverRef = FirebaseDatabase.getInstance().getReference().child("user").child("passenger");
 
-        String name = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(userId).child("name").toString();
-        String vehicleNumber = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(userId).child("vehicleNumber").toString();
-        String vehicleModel = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(userId).child("vehicleModel").toString();
-        String pickupName = currentLocation.getText().toString();
-        String destinationName = destination.getText().toString();
+        passUserToDriverRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                PassengerRequest passengerRequestList = dataSnapshot.getValue(PassengerRequest.class);
+                String name = passengerRequestList.getName();
+                String vehicleNumber = passengerRequestList.getVehicleNumber();
+                String vehicleModel = passengerRequestList.getVehicleModel();
+                String pickupName = acCurrentLocation.getText().toString();
+                Double pickupLatitude = mLastLocation.getLatitude();
+                Double pickupLongitude = mLastLocation.getLongitude();
+                String destinationName = acDestination.getText().toString();
+                String serviceType = tvServiceType.getText().toString();
+                Double servicePrice = parseDouble(tvServicePrice.getText().toString());
 
+                PassengerRequest insertPassengerRequest = new PassengerRequest(name, vehicleNumber, vehicleModel, pickupName, pickupLatitude, pickupLongitude, destinationName, serviceType, servicePrice);
+                mRef.child(driverFoundId).setValue(insertPassengerRequest);
+            }
 
-//        GeoFire geoFire = new GeoFire(mRef);
-//        geoFire.setLocation(driverFoundId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-        PassengerRequest passengerRequest = new PassengerRequest(name, vehicleNumber, vehicleModel, pickupName, destinationName);
-        mRef.child(driverFoundId).setValue(passengerRequest);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         DatabaseReference driverLocationRef = FirebaseDatabase.getInstance().getReference().child("availableDriver").child(driverFoundId).child("l");
         driverLocationRef.addValueEventListener(new ValueEventListener() {
@@ -400,10 +402,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     double locationLng = 0;
 
                     if(map.get(0) != null) {
-                        locationLat = Double.parseDouble(map.get(0).toString());
+                        locationLat = parseDouble(map.get(0).toString());
                     }
                     if(map.get(1) != null) {
-                        locationLng = Double.parseDouble(map.get(1).toString());
+                        locationLng = parseDouble(map.get(1).toString());
                     }
 
                     LatLng driverLatLng = new LatLng(locationLat, locationLng);
@@ -489,9 +491,9 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         Log.i("Called","showKeyBoard()");
         InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         // only will trigger it if no physical keyboard is open
-        mgr.showSoftInput(destination, InputMethodManager.SHOW_IMPLICIT);
+        mgr.showSoftInput(acDestination, InputMethodManager.SHOW_IMPLICIT);
 
-        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(destination, 0);
+        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(acDestination, 0);
 
     }
 
@@ -504,10 +506,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 .enableAutoManage(getActivity(), this)
                 .build();
 
-        currentLocation = (AutoCompleteTextView) getView().findViewById(R.id.currentLocation);
-        destination = (AutoCompleteTextView) getView().findViewById(R.id.destination);
+        acCurrentLocation = (AutoCompleteTextView) getView().findViewById(R.id.currentLocation);
+        acDestination = (AutoCompleteTextView) getView().findViewById(R.id.destination);
 
-        destination.setOnItemClickListener(mAutocompleteClickListener);
+        acDestination.setOnItemClickListener(mAutocompleteClickListener);
 
         AutocompleteFilter filter =
                 new AutocompleteFilter.Builder().setCountry("SG").build();
@@ -518,7 +520,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mPlaceDetectionClient= Places.getPlaceDetectionClient(getActivity());
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        destination.setAdapter(mPlaceAutocompleteAdapter);
+        acDestination.setAdapter(mPlaceAutocompleteAdapter);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
@@ -730,6 +732,20 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(i);
             final String placeId = item.getPlaceId();
 
+            Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
+                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                        @Override
+                        public void onResult(PlaceBuffer places) {
+                            if (places.getStatus().isSuccess()) {
+                                final Place myPlace = places.get(0);
+                                LatLng queriedLocation = myPlace.getLatLng();
+                                Log.v("Latitude is", "" + queriedLocation.latitude);
+                                Log.v("Longitude is", "" + queriedLocation.longitude);
+                            }
+                            places.release();
+                        }
+                    });
+
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
@@ -739,6 +755,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             btnProceed.setVisibility(View.VISIBLE);
         }
     };
+
+
 
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -773,23 +791,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         }
     };
 
-//    private class GeocoderHandler extends Handler {
-//        @Override
-//        public void handleMessage(Message message) {
-//            Log.i("Called","GeocodeHandler()");
-//            String locationAddress;
-//            switch (message.what) {
-//                case 1:
-//                    Bundle bundle = message.getData();
-//                    locationAddress = bundle.getString("address");
-//                    break;
-//                default:
-//                    locationAddress = null;
-//            }
-//            currentLocation.setText(locationAddress);
-//        }
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -802,7 +803,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         mGoogleApiClient.stopAutoManage(getActivity());
         mGoogleApiClient.disconnect();
-
     }
 
     @Override
@@ -830,6 +830,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 }
             });
     }
+
     private void displayDriversAround(){
 
         Log.i("called","started displayDriversAround");
@@ -839,7 +840,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         userLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
         final GeoFire geoFire = new GeoFire(driverLocationRef);
-        geoFire.setLocation("xing chuan", new GeoLocation(1.334858, 103.884722));
+        geoFire.setLocation("BDBZTqD7YFeedQgCy9DzIIYpPht1", new GeoLocation(1.334858, 103.884722));
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userLocation.latitude, userLocation.longitude), 1000);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
@@ -922,7 +923,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             }
 
             Log.i("mAddressOutput",mAddressOutput);
-            currentLocation.setText(mAddressOutput);
+            acCurrentLocation.setText(mAddressOutput);
 
         }
     }
@@ -958,8 +959,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         }
 
     }
-
-
 
     protected void startIntentService() {
         Intent intent = new Intent(getContext(), FetchAddressIntentService.class);
