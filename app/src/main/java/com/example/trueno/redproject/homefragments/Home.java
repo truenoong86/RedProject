@@ -6,16 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,13 +34,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.trueno.redproject.CashActivity;
+import com.example.trueno.redproject.MainActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
 import com.example.trueno.redproject.RideDetailsActivity;
 import com.example.trueno.redproject.models.PassengerRequest;
 import com.example.trueno.redproject.models.PlaceInfo;
+import com.example.trueno.redproject.services.FetchAddressIntentService;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -79,9 +86,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -131,6 +140,20 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     boolean getDriversAroundStarted = false;
 
     List<Marker>markerList = new ArrayList<Marker>();
+
+    private AddressResultReceiver mResultReceiver;
+
+    public final class Constants {
+        public static final int SUCCESS_RESULT = 0;
+        public static final int FAILURE_RESULT = 1;
+        public static final String PACKAGE_NAME =
+                "com.google.android.gms.location.sample.locationaddress";
+        public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
+        public static final String RESULT_DATA_KEY = PACKAGE_NAME +
+                ".RESULT_DATA_KEY";
+        public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME +
+                ".LOCATION_DATA_EXTRA";
+    }
 
     public Home() {
         // Required empty public constructor
@@ -638,6 +661,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                             new LatLng(location.getLatitude(), location.getLongitude()), 17.0f  )
                                     );
+                                    fetchAddress();
 
                                     if(!getDriversAroundStarted){
                                         displayDriversAround();
@@ -670,6 +694,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        startIntentService();
     }
 
     @Override
@@ -748,22 +773,22 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         }
     };
 
-    private class GeocoderHandler extends Handler {
-        @Override
-        public void handleMessage(Message message) {
-            Log.i("Called","GeocodeHandler()");
-            String locationAddress;
-            switch (message.what) {
-                case 1:
-                    Bundle bundle = message.getData();
-                    locationAddress = bundle.getString("address");
-                    break;
-                default:
-                    locationAddress = null;
-            }
-            currentLocation.setText(locationAddress);
-        }
-    }
+//    private class GeocoderHandler extends Handler {
+//        @Override
+//        public void handleMessage(Message message) {
+//            Log.i("Called","GeocodeHandler()");
+//            String locationAddress;
+//            switch (message.what) {
+//                case 1:
+//                    Bundle bundle = message.getData();
+//                    locationAddress = bundle.getString("address");
+//                    break;
+//                default:
+//                    locationAddress = null;
+//            }
+//            currentLocation.setText(locationAddress);
+//        }
+//    }
 
     @Override
     public void onResume() {
@@ -876,4 +901,73 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             }
         });
     }
+
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            if (resultData == null) {
+                return;
+            }
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            String mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
+            if (mAddressOutput == null) {
+                mAddressOutput = "Null";
+            }
+
+            Log.i("mAddressOutput",mAddressOutput);
+            currentLocation.setText(mAddressOutput);
+
+        }
+    }
+
+    public void fetchAddress(){
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i("error","No permissions");
+            return;
+        } else {
+
+            mFusedLocationProviderClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            mLastLocation = location;
+
+                            // In some rare cases the location returned can be null
+                            if (mLastLocation == null) {
+                                return;
+                            }
+
+                            if (!Geocoder.isPresent()) {
+                                Toast.makeText(getActivity(),
+                                        "No Geocoder",
+                                        Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            // Start service and update UI to reflect new location
+                            startIntentService();
+                        }
+                    });
+        }
+
+    }
+
+
+
+    protected void startIntentService() {
+        Intent intent = new Intent(getContext(), FetchAddressIntentService.class);
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
+        getContext().startService(intent);
+    }
+
+
 }

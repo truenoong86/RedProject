@@ -35,15 +35,11 @@ public class FetchAddressIntentService extends IntentService {
                 ".RESULT_DATA_KEY";
         public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME +
                 ".LOCATION_DATA_EXTRA";
-
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.i("called","service onHandleIntent()");
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-
         if (intent == null) {
             return;
         }
@@ -52,11 +48,10 @@ public class FetchAddressIntentService extends IntentService {
         // Get the location passed to this service through an extra.
         Location location = intent.getParcelableExtra(
                 Constants.LOCATION_DATA_EXTRA);
-
+        mReceiver = intent.getParcelableExtra(Constants.RECEIVER);
         // ...
 
         List<Address> addresses = null;
-
         try {
             addresses = geocoder.getFromLocation(
                     location.getLatitude(),
@@ -64,9 +59,11 @@ public class FetchAddressIntentService extends IntentService {
                     // In this sample, get just a single address.
                     1);
         } catch (IOException ioException) {
-            Log.e(TAG, errorMessage, ioException);
+            // Catch network or other I/O problems.
+            Log.e("onHandleIntent() Error","No service or network", ioException);
         } catch (IllegalArgumentException illegalArgumentException) {
-            Log.e(TAG, errorMessage + ". " +
+            // Catch invalid latitude or longitude values.
+            Log.e("onHandleIntent() Error", "Invalid latlng values " + ". " +
                     "Latitude = " + location.getLatitude() +
                     ", Longitude = " +
                     location.getLongitude(), illegalArgumentException);
@@ -75,7 +72,7 @@ public class FetchAddressIntentService extends IntentService {
         // Handle case where no address was found.
         if (addresses == null || addresses.size()  == 0) {
             if (errorMessage.isEmpty()) {
-                Log.e(TAG, errorMessage);
+                Log.e("onHandleIntent() Error", "Address is not found");
             }
             deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
         } else {
@@ -87,10 +84,10 @@ public class FetchAddressIntentService extends IntentService {
             for(int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
                 addressFragments.add(address.getAddressLine(i));
             }
-            String message =  TextUtils.join(System.getProperty("line.separator"),
-                    addressFragments);
-            deliverResultToReceiver(Constants.SUCCESS_RESULT,message
-                   );
+            Log.i("onHandleIntent() ","Address found");
+            deliverResultToReceiver(Constants.SUCCESS_RESULT,
+                    TextUtils.join(System.getProperty("line.separator"),
+                            addressFragments));
         }
     }
 
