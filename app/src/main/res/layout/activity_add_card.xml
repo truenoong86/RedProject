@@ -54,30 +54,32 @@
             android:layout_marginTop="15dp">
 
             <EditText
+                android:id="@+id/etExpiry"
                 android:layout_width="152dp"
                 android:layout_height="45dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/edit_text_background"
+                android:hint="MM/YY"
+                android:paddingEnd="5dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp"
-                android:hint="MM/YY"
-                android:layout_weight="1" />
+                android:paddingStart="5dp" />
 
             <EditText
+                android:id="@+id/etCVV"
                 android:layout_width="152dp"
                 android:layout_height="45dp"
-                android:background="@drawable/edit_text_background"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_background"
                 android:hint="CVV"
-                android:layout_weight="1" />
+                android:paddingEnd="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingStart="5dp" />
 
         </LinearLayout>
 
@@ -94,6 +96,7 @@
                 android:textSize="14dp"/>
 
             <Switch
+                android:id="@+id/swPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -146,12 +149,13 @@
             android:layout_marginBottom="20dp">
 
             <Button
+                android:id="@+id/btnSubmit"
                 android:layout_width="308.73dp"
                 android:layout_height="45dp"
                 android:background="#6E8F00"
                 android:text="Save"
                 android:textColor="#fff"
-                android:textSize="14dp"/>
+                android:textSize="14dp" />
 
         </LinearLayout>
         

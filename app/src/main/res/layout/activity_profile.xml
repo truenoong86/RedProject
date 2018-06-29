@@ -62,12 +62,13 @@
             android:src="@mipmap/ic_launcher_round" />
 
         <TextView
+            android:id="@+id/tvTopName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:text="Ally Tan"
             android:textColor="#fff"
-            android:textSize="18dp"
-            android:layout_marginTop="15dp"/>
+            android:textSize="18dp" />
 
     </LinearLayout>
 
