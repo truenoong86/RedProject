@@ -344,8 +344,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     }
 
     class CustomListAdapter extends ArrayAdapter<String> {
-        private Context mContext;
-        private List<Services> servicesList = new ArrayList<>();
 
         public CustomListAdapter(Context context, String[] services) {
             super(context, R.layout.custom_row, services);
@@ -361,9 +359,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
             TextView tvServices = (TextView) customView.findViewById(R.id.tvServices);
             tvServices.setText(singleServiceItem);
-
-            TextView tvPrice = (TextView) customView.findViewById(R.id.tvPrice);
-//            tvPrice.setText(String.valueOf(singleServiceItem.getPrice()));
 
             return customView;
         }
