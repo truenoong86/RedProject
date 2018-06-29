@@ -76,6 +76,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -466,6 +467,86 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 // Get the current location of the device and set the position of the map.
                 getDeviceLocation();
+
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                final DatabaseReference ref =  database.getReference().child("availableDriver");
+
+                //onChildAdded,onChildMoved,onChildChanged == Adding new availableDriver;
+                //onChildChanged = change long or lat of availableDriver;
+                //onChildRemoved = removing data
+
+
+                ref.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.i("onChildAdded",dataSnapshot.toString());
+                        if(dataSnapshot.exists()){
+
+                            double locationLat = 0;
+                            double locationLng = 0;
+
+                            if(dataSnapshot.child("l").child("0").getValue() != null) {
+                                locationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
+                            }
+                            if(dataSnapshot.child("l").child("1").getValue() != null) {
+                                locationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
+                            }
+
+                            Log.i("LatLng",locationLat+" "+locationLng);
+
+                            final GeoFire geoFire = new GeoFire(ref);
+                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(locationLat, locationLng));
+//
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.i("onChildChanged",dataSnapshot.toString());
+
+                        if(dataSnapshot.exists()){
+
+                            String changedKey = dataSnapshot.getKey();
+
+                            double newLocationLat = 0;
+                            double newLocationLng = 0;
+
+                            if(dataSnapshot.child("l").child("0").getValue() != null) {
+                                newLocationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
+                            }
+                            if(dataSnapshot.child("l").child("1").getValue() != null) {
+                                newLocationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
+                            }
+
+                            Log.i("LatLng",newLocationLat+" "+newLocationLng);
+
+                            final GeoFire geoFire = new GeoFire(ref);
+                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(newLocationLat, newLocationLng));
+//
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                        Log.i("onChildRemoved",dataSnapshot.toString());
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.i("onChildMoved",dataSnapshot.toString());
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.i("onCancelled","cancelled");
+
+                    }
+                });
+
+
             }
         });
 
@@ -594,7 +675,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                                     if(!getDriversAroundStarted){
                                         displayDriversAround();
                                         displayCurrentDriversAround();
+
                                     }
+                                } else {
+                                    Log.i("mLastLocation","mLastLocation is null");
                                 }
                             }
                         });
@@ -718,30 +802,30 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 //        }
 //    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("Called","onPause()");
-
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.i("Called","onStop()");
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.stopAutoManage(getActivity());
-            mGoogleApiClient.disconnect();
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Log.i("Called","onPause()");
+//
+//        mGoogleApiClient.stopAutoManage(getActivity());
+//        mGoogleApiClient.disconnect();
+//
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        Log.i("Called","onStop()");
+//        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+//            mGoogleApiClient.stopAutoManage(getActivity());
+//            mGoogleApiClient.disconnect();
+//        }
+//    }
 
     private void displayCurrentDriversAround(){
         FirebaseDatabase.getInstance().getReference().child("availableDriver")
@@ -751,27 +835,34 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 //                        User user = snapshot.getValue(User.class);
 //                        System.out.println(user.email);
-                        //DatabaseReference idRef = (FirebaseDatabase.getInstance().getReference("availableDriver"));
+                        DatabaseReference idRef = (FirebaseDatabase.getInstance().getReference("availableDriver"));
                         Log.i("idRef",snapshot.getValue().toString());
-//                        List<Object> map = (List<Object>) idRef.child("l");
-//                        double locationLat = 0;
-//                        double locationLng = 0;
+
+                        if(snapshot.exists()){
+
+                            double locationLat = 0;
+                            double locationLng = 0;
+
+                            if(snapshot.child("l").child("0").getValue() != null) {
+                                locationLat = Double.parseDouble(snapshot.child("l").child("0").getValue().toString());
+                            }
+                            if(snapshot.child("l").child("1").getValue() != null) {
+                                locationLng = Double.parseDouble(snapshot.child("l").child("1").getValue().toString());
+                            }
+
+                            LatLng completeLatLng = new LatLng(locationLat,locationLng);
+                            Log.i("LatLng",locationLat+" "+locationLng);
+
+                            final GeoFire geoFire = new GeoFire(idRef);
+                             geoFire.setLocation(snapshot.getKey(), new GeoLocation(locationLat, locationLng));
+//                            mMap.addMarker(new MarkerOptions()`
+//                                    .position(completeLatLng)
+//                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
 //
-//                        if(map.get(0) != null) {
-//                            locationLat = Double.parseDouble(map.get(0).toString());
-//                        }
-//                        if(map.get(1) != null) {
-//                            locationLng = Double.parseDouble(map.get(1).toString());
-//                        }
-//
-//                        LatLng completeLatLng = new LatLng(locationLat,locationLng);
-//                        Log.i("LatLng",locationLat+" "+locationLng);
-//
-//                        mMap.addMarker(new MarkerOptions()
-//                                .position(completeLatLng)
-//                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-//
-//                        );
+//                            );
+                        }
+
+
 
                     }
                 }
@@ -789,7 +880,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         userLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
         final GeoFire geoFire = new GeoFire(driverLocationRef);
-        geoFire.setLocation("xing chuan", new GeoLocation(1.334858, 103.884722));
+        //geoFire.setLocation("xing chuan", new GeoLocation(1.334858, 103.884722));
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userLocation.latitude, userLocation.longitude), 1000);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
