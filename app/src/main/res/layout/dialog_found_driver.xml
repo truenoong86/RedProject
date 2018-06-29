@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingBottom="30dp">
+        android:paddingBottom="20dp">
 
         <RelativeLayout
             android:id="@+id/toolbarLayout"
@@ -72,9 +72,17 @@
             android:text="View Details"
             android:textColor="#6E8F00"
             android:textSize="14dp"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"/>
+            android:layout_marginTop="10dp"/>
 
+        <Button
+            android:id="@+id/btnCancelBooking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:background="#6E8F00"
+            android:text="CANCEL BOOKING"
+            android:textColor="#fff"
+            android:textSize="16dp"/>
     </LinearLayout>
 
 </RelativeLayout>

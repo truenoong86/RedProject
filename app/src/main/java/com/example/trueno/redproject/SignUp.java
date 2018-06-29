@@ -44,8 +44,6 @@ public class SignUp extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         userListRef = firebaseDatabase.getReference("/user/passenger");
 
-
-
         back = (android.support.v7.widget.Toolbar) findViewById(R.id.back);
         tvTerms = (TextView) findViewById(R.id.tvTerms);
         tvPrivacyPolicy = (TextView) findViewById(R.id.tvPrivacyPolicy);
@@ -62,7 +60,6 @@ public class SignUp extends AppCompatActivity {
         etYear = findViewById(R.id.etYearOfManufacture);
         etTyre = findViewById(R.id.etTyreSize);
         etInsurance = findViewById(R.id.etInsurance);
-
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,8 +99,6 @@ public class SignUp extends AppCompatActivity {
         String userConfirmPassword = editTextConfirmPassword.getText().toString();
 
         String userName = etName.getText().toString();
-
-
 
             firebaseAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
