@@ -27,10 +27,9 @@
             android:id="@+id/tvViewProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:text="View Profile"
-            android:textColor="#6E8F00"
-            android:textSize="10dp"
-            android:layout_marginTop="5dp" />
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
     </LinearLayout>
 

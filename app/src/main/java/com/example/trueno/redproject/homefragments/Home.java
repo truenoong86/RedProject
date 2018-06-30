@@ -667,38 +667,70 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Log.i("onChildChanged",dataSnapshot.toString());
 
-                        if(dataSnapshot.exists()){
-
-                            String changedKey = dataSnapshot.getKey();
-
-                            double newLocationLat = 0;
-                            double newLocationLng = 0;
-
-                            if(dataSnapshot.child("l").child("0").getValue() != null) {
-                                newLocationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
-                            }
-                            if(dataSnapshot.child("l").child("1").getValue() != null) {
-                                newLocationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
-                            }
-
-                            Log.i("LatLng",newLocationLat+" "+newLocationLng);
-
-                            final GeoFire geoFire = new GeoFire(ref);
-                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(newLocationLat, newLocationLng));
+//                        if(dataSnapshot.exists()){
 //
-                        }
+//                            String changedKey = dataSnapshot.getKey();
+//
+//                            double newLocationLat = 0;
+//                            double newLocationLng = 0;
+//
+//                            if(dataSnapshot.child("l").child("0").getValue() != null) {
+//                                newLocationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
+//                            }
+//                            if(dataSnapshot.child("l").child("1").getValue() != null) {
+//                                newLocationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
+//                            }
+//
+//                            Log.i("LatLng",newLocationLat+" "+newLocationLng);
+//
+//                            final GeoFire geoFire = new GeoFire(ref);
+//                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(newLocationLat, newLocationLng));
+////
+//                        }
 
                     }
 
                     @Override
                     public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                         Log.i("onChildRemoved",dataSnapshot.toString());
+                        if (dataSnapshot.exists()) {
+
+                            final GeoFire geoFire = new GeoFire(ref);
+                            geoFire.removeLocation(dataSnapshot.getKey());
+
+                        }
+
 
                     }
 
                     @Override
                     public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Log.i("onChildMoved",dataSnapshot.toString());
+
+                        if(dataSnapshot.exists()){
+
+                            final GeoFire geoFire = new GeoFire(ref);
+
+                            double locationLat = 0;
+                            double locationLng = 0;
+
+                            if(dataSnapshot.child("l").child("0").getValue() != null) {
+                                locationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
+                            }
+                            if(dataSnapshot.child("l").child("1").getValue() != null) {
+                                locationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
+                            }
+
+                            Log.i("LatLng",locationLat+" "+locationLng);
+
+                            geoFire.removeLocation(dataSnapshot.getKey());
+
+                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(locationLat, locationLng));
+
+//
+                        }
+
+
 
                     }
 
@@ -1030,6 +1062,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             });
     }
 
+    //constantly listens for setLocation() to be called
+    //when setLocation is called, onKeyEntered will be called in this method
+    //which is in charge of adding the marker
+    //radius can be change in the geoQuery below to indicate range
     private void displayDriversAround(){
 
         Log.i("called","started displayDriversAround");
