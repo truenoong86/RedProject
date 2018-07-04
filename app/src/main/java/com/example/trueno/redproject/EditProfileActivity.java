@@ -177,10 +177,6 @@ public class EditProfileActivity extends AppCompatActivity {
                     userUpdates.put("insuranceCompany",vInsurance);
 
 
-
-
-                    passengerRef.updateChildren(userUpdates);
-
                     //checkImageAvailable
                     if(resultUri != null || resultBitmap != null){
                         Log.i("status called","resultUri is not null");

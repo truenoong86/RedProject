@@ -154,6 +154,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     private AddressResultReceiver mResultReceiver;
 
+    ImageView ivPhone, ivMessage;
+
     public final class Constants {
         public static final int SUCCESS_RESULT = 0;
         public static final int FAILURE_RESULT = 1;
@@ -213,6 +215,52 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         btnProceed = (Button) view.findViewById(R.id.btnProceed);
         mServicesList = new ArrayList<>();
         mapFragment.getMapAsync(this);
+
+        tvPromoText = view.findViewById(R.id.tvPromoText);
+        tvRemarksText = view.findViewById(R.id.tvRemarksText);
+
+        //Waiting for pickup navbar
+        ivPhone.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                FirebaseDatabase.getInstance().getReference().child("trip")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String passengerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    if(snapshot.child("passengerID").getValue() == passengerID){
+                                        final String driverID = snapshot.getKey();
+                                        FirebaseDatabase.getInstance().getReference().child("user").child("driver")
+                                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                            if(driverID == snapshot.getKey()){
+                                                                String phoneNo = snapshot.child("phone_number").getValue().toString();
+                                                                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNo, null));
+                                                                startActivity(intent);
+                                                            }
+                                                        }
+                                                    }
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+                                                    }
+                                                });
+
+
+
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+
+            }
+        });
 
 
         singleLineCard.setOnClickListener(new View.OnClickListener() {
