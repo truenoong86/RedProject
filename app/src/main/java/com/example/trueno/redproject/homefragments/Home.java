@@ -115,7 +115,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     private Boolean requestBol = false;
     private String driverFoundId;
     private int promoDeduction = 0;
-    private Marker mDriverMarker;
+    private Marker mDriverMarker, mFoundDriverMarker;
     private DatabaseReference requestListRef;
     android.support.v7.widget.Toolbar close;
     LatLng pickupLocation;
@@ -128,7 +128,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     View mapView;
     LinearLayout cashLayout, remarksLayout, promoLayout, findingDriver;
     AutoCompleteTextView acCurrentLocation, acDestination;
-    android.support.v7.widget.CardView afterChoosingLocation, singleLineCard;
+    android.support.v7.widget.CardView afterChoosingLocation, singleLineCard, cvDriverInfo, cvAccepted;
     TextView tvDriverName, tvViewDetails, tvServiceType, tvServicePrice, tvPromo, tvRemarks;
     TextView tvPromoText,tvRemarksText;
     EditText etRemarks, etPromo;
@@ -169,7 +169,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         // Required empty public constructor
     }
 
-
     String userRemarks = "";
     int userPromo = 0;
     String userPaymentPref = "Cash";
@@ -197,6 +196,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         findingDriver = (LinearLayout) view.findViewById(R.id.findingDriver);
         afterChoosingLocation = (android.support.v7.widget.CardView) view.findViewById(R.id.afterChoosingLocation);
         singleLineCard = (android.support.v7.widget.CardView) view.findViewById(R.id.singleLineCard);
+        cvDriverInfo = (android.support.v7.widget.CardView) view.findViewById(R.id.cvDriverInfo);
+        cvAccepted = (android.support.v7.widget.CardView) view.findViewById(R.id.cvAccepted);
         btnProceed = (Button) view.findViewById(R.id.btnProceed);
         mServicesList = new ArrayList<>();
         mapFragment.getMapAsync(this);
@@ -261,8 +262,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 ArrayList<Services> servicesList = new ArrayList<>();
                 final String[] services = {"Tow (Accident)", "Tow (Breakdown)", "Tyre Mending", "Spare Tyre Replacement", "Battery Jump Start", "Battery Replacement", "Others"};
-                final String[] day_price = {"60","165","45","55","55","55","70"};
-                final String[] night_price = {"70","175","55","65","65","65","80"};
+                final String[] day_price = {"60.00","165.00","45.00","55.00","55.00","55.00","70.00"};
+                final String[] night_price = {"70.00","175.00","55.00","65.00","65.00","65.00","80.00"};
                 for(int i=0;i<services.length; i++){
                     servicesList.add(new Services(services[i],day_price[i],night_price[i]));
                 }
@@ -273,16 +274,14 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         TextView tvType = getActivity().findViewById(R.id.tvServiceType);
-                        TextView tvPrice = getActivity().findViewById(R.id.tvServicePrice);
                         tvType.setText(services[i]);
                         if(checkIsDay()){
+                            tvServicePrice.setText(day_price[i]);
+                        } else {
+                            tvServicePrice.setText(night_price[i]);
                             Double dayPrice = Double.parseDouble(day_price[i]);
                             Double discountedPrice = dayPrice-userPromo;
-                            tvPrice.setText("$"+discountedPrice);
-                        } else {
-                            Double nightPrice = Double.parseDouble(night_price[i]);
-                            Double discountedPrice = nightPrice-userPromo;
-                            tvPrice.setText("$"+discountedPrice);
+                            tvServicePrice.setText(discountedPrice.toString());
                         }
                         dialog.dismiss();
                     }
@@ -443,8 +442,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     }
                 });
 
-
-
                 close = (android.support.v7.widget.Toolbar) dialog.findViewById(R.id.close);
 
                 close.setOnClickListener(new View.OnClickListener() {
@@ -496,6 +493,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             TextView tvPrices = (TextView) customView.findViewById(R.id.tvPrice);
             if(checkIsDay()){
                 tvPrices.setText("$"+singleServiceItem.getDay_price());
+
             } else {
                 tvPrices.setText("$"+singleServiceItem.getNight_price());
             }
@@ -570,7 +568,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference passUserToDriverRef = FirebaseDatabase.getInstance().getReference().child("user").child("passenger");
 
-        String location = acDestination.getText().toString();
+        final String location = acDestination.getText().toString();
         Geocoder gc = new Geocoder(getContext());
         List<Address> list = gc.getFromLocationName(location, 1);
         Address add = list.get(0);
@@ -593,11 +591,12 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 Double destinationLatitude = destinationLat;
                 Double destinationLongitude = destinationLng;
                 String serviceType = tvServiceType.getText().toString();
+                String status = "pending";
                 Double servicePrice = parseDouble(tvServicePrice.getText().toString());
                 String remarks = tvRemarks.getText().toString();
                 String promo = tvPromo.getText().toString();
 
-                PassengerRequest insertPassengerRequest = new PassengerRequest(name, vehicleNumber, vehicleModel, pickupName, pickupLatitude, pickupLongitude, destinationName, destinationLatitude, destinationLongitude, serviceType, servicePrice, remarks, promo);
+                PassengerRequest insertPassengerRequest = new PassengerRequest(name, vehicleNumber, vehicleModel, pickupName, pickupLatitude, pickupLongitude, destinationName, destinationLatitude, destinationLongitude, serviceType, status, servicePrice, remarks, promo);
                 mRef.child(driverFoundId).setValue(insertPassengerRequest);
             }
 
@@ -627,6 +626,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
+
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
@@ -638,7 +638,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         locationLng = parseDouble(map.get(1).toString());
                     }
 
-                    LatLng driverLatLng = new LatLng(locationLat, locationLng);
+                    final LatLng driverLatLng = new LatLng(locationLat, locationLng);
                     if(mDriverMarker != null) {
                         mDriverMarker.remove();
                     }
@@ -658,6 +658,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                     btnProceed.setText("CANCEL BOOKING");
 
+
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
                     View mView = getLayoutInflater().inflate(R.layout.dialog_found_driver, null);
 
@@ -667,6 +668,18 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                     close = (android.support.v7.widget.Toolbar) dialog.findViewById(R.id.close);
                     tvViewDetails = (TextView) dialog.findViewById(R.id.tvViewDetails);
+                    btnCancel = (Button) dialog.findViewById(R.id.btnCancelBooking);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference cancelBookingRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId);
+                            cancelBookingRef.removeValue();
+                            btnProceed.setVisibility(View.GONE);
+                            cvAccepted.setVisibility(View.GONE);
+                            dialog.dismiss();
+                        }
+                    });
 
                     tvViewDetails.setText(Html.fromHtml("<u>View Details</u> "));
 
@@ -705,7 +718,120 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         }
                     });
 
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your driver").icon(BitmapDescriptorFactory.fromResource(R.drawable.car_image)));
+                    final DatabaseReference requestStatusRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId).child("status");
+                    final DatabaseReference nextDriverRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId);
+
+                    requestStatusRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+
+                            final String status = dataSnapshot.getValue(String.class);
+
+                            nextDriverRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull final DataSnapshot dataSnapshott) {
+                                    if (status != null) {
+                                        if (status.equals("rejected")) {
+                                            Log.d("found test", "test");
+                                            DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("availableDriver");
+                                            driverFound = false;
+
+                                            GeoFire geoFire = new GeoFire(driverLocation);
+                                            GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
+                                            geoQuery.removeAllListeners();
+                                            geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                                                @Override
+                                                public void onKeyEntered(String key, GeoLocation location) {
+                                                    Log.i("called", "onKeyEntered");
+                                                    if (!driverFound) {
+
+                                                        Log.e("DATA" ," SnAPSHOt"+dataSnapshott.getKey()+"  drifer foound : "+driverFoundId);
+
+                                                        if(dataSnapshott.getKey() != driverFoundId) {
+                                                            Log.e("DATA ","NOT SAME");
+                                                            driverFound = true;
+                                                            driverFoundId = key;
+
+                                                            Log.d("Found driver", driverFoundId);
+
+                                                            DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("user").child("driver").child(driverFoundId);
+                                                            String passengerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                                            HashMap map = new HashMap();
+                                                            map.put("passengerRideId", passengerId);
+                                                            driverRef.updateChildren(map);
+                                                            try {
+                                                                getDriverLocation();
+                                                            } catch (MalformedURLException e) {
+
+                                                            } catch (IOException e) {
+
+                                                            }
+                                                        } else {
+                                                            Log.e("DATA ","SAME");
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onKeyExited(String key) {
+
+                                                }
+
+                                                @Override
+                                                public void onKeyMoved(String key, GeoLocation location) {
+
+                                                }
+
+                                                @Override
+                                                public void onGeoQueryReady() {
+                                                    if (!driverFound) {
+                                                        radius++;
+                                                        Log.d("testradius: ", radius + "");
+                                                        getClosestDriver();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onGeoQueryError(DatabaseError error) {
+
+                                                }
+                                            });
+
+                                        findingDriver.setVisibility(View.VISIBLE);
+                                        } else if (status.equals("accepted")) {
+                                            cvAccepted.setVisibility(View.VISIBLE);
+
+                                            mMap.clear();
+                                            markerList.clear();
+                                            mFoundDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your driver").icon(BitmapDescriptorFactory.fromResource(R.drawable.car_image)));
+                                        }
+                                    } else {
+                                        Log.d("null", "This is null");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    btnProceed.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference cancelBookingRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId);
+                            cancelBookingRef.removeValue();
+                            btnProceed.setVisibility(View.GONE);
+                            cvAccepted.setVisibility(View.GONE);
+                        }
+                    });
 
                 }
             }
@@ -848,8 +974,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 //
                         }
 
-
-
                     }
 
                     @Override
@@ -858,7 +982,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                     }
                 });
-
 
             }
         });
@@ -988,7 +1111,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                                     if(!getDriversAroundStarted){
                                         displayDriversAround();
                                         displayCurrentDriversAround();
-
                                     }
                                 } else {
                                     Log.i("mLastLocation","mLastLocation is null");
@@ -1208,6 +1330,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         .icon((BitmapDescriptorFactory.fromResource(R.drawable.car_image )))
                 );
 
+
                 //Tags the id of the driver in the marker, Remove after testing
                 mDriverMarker.setTag(key);
 
@@ -1225,6 +1348,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     }
                 }
             }
+
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
