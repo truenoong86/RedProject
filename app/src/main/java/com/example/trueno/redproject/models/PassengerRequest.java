@@ -11,6 +11,7 @@ public class PassengerRequest {
     private Double destinationLatitude;
     private Double destinationLongitude;
     private String serviceType;
+    private String status;
     private Double price;
     private String remarks;
     private String promo;
@@ -19,7 +20,7 @@ public class PassengerRequest {
 
     }
 
-    public PassengerRequest(String name, String vehicleNumber, String vehicleModel, String pickupName, Double pickupLatitude, Double pickupLongitude, String destinationName, Double destinationLatitude, Double destinationLongitude, String serviceType, Double price, String remarks, String promo) {
+    public PassengerRequest(String name, String vehicleNumber, String vehicleModel, String pickupName, Double pickupLatitude, Double pickupLongitude, String destinationName, Double destinationLatitude, Double destinationLongitude, String serviceType, String status, Double price, String remarks, String promo) {
         this.name = name;
         this.vehicleNumber = vehicleNumber;
         this.vehicleModel = vehicleModel;
@@ -30,6 +31,7 @@ public class PassengerRequest {
         this.destinationLatitude = destinationLatitude;
         this.destinationLongitude = destinationLongitude;
         this.serviceType = serviceType;
+        this.status = status;
         this.price = price;
         this.remarks = remarks;
         this.promo = promo;
@@ -113,6 +115,14 @@ public class PassengerRequest {
 
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Double getPrice() {
