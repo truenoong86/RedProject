@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -69,8 +70,10 @@ public class ProfileActivity extends AppCompatActivity {
                         tvTyre.setText(currUserProfile.getTyreSize());
                         tvInsurance.setText(currUserProfile.getInsuranceCompany());
 
+                        Log.i("status called","refresh profile");
                         if(dataSnapshot.hasChild("profileImageUrl")){
                             if(!currUserProfile.getProfileImageUrl().equalsIgnoreCase("No Image")){
+                                Log.i("status called","set image");
                                 Glide.with(getApplication()).load(currUserProfile.getProfileImageUrl()).into(civProfile);
                             }
                         }
@@ -102,6 +105,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data){
+        Log.i("status called","refresh");
         Intent refresh = new Intent(this, ProfileActivity.class);
         startActivity(refresh);
         this.finish();

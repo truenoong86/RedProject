@@ -61,6 +61,7 @@ public class EditProfileActivity extends AppCompatActivity {
     ArrayAdapter<String> dataInsuranceAdapter;
 
     private Uri resultUri;
+    private Bitmap resultBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +149,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
                 final DatabaseReference passengerRef = cardDetailsRef.child(passengerId);
-                Map<String, Object> userUpdates = new HashMap<>();
+                final Map<String, Object> userUpdates = new HashMap<>();
                 String uName = etName.getText().toString();
                 String uCountryCode = etCountry.getText().toString();
                 String uPhone = etPhone.getText().toString();
@@ -181,12 +182,17 @@ public class EditProfileActivity extends AppCompatActivity {
                     passengerRef.updateChildren(userUpdates);
 
                     //checkImageAvailable
-                    if(resultUri != null){
+                    if(resultUri != null || resultBitmap != null){
+                        Log.i("status called","resultUri is not null");
                         StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_image").child(passengerId);
                         Bitmap bitmap = null;
 
                         try{
-                            bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
+                            if(resultUri != null){
+                                bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
+                            }else if(resultBitmap != null){
+                                bitmap = resultBitmap;
+                            }
                         } catch (IOException e){
                             e.printStackTrace();
                         }
@@ -199,15 +205,16 @@ public class EditProfileActivity extends AppCompatActivity {
                         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Log.i("status called","success added");
                                 StorageMetadata smd = taskSnapshot.getMetadata();
                                 StorageReference sRef = smd.getReference();
                                 sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         Uri downloadUrl = uri;
-                                        Map newImage = new HashMap();
-                                        newImage.put("profileImageUrl",downloadUrl.toString());
-                                        passengerRef.updateChildren(newImage);
+                                        //Map newImage = new HashMap();
+                                        userUpdates.put("profileImageUrl",downloadUrl.toString());
+                                        passengerRef.updateChildren(userUpdates);
                                         finish();
                                     }
                                 });
@@ -223,7 +230,7 @@ public class EditProfileActivity extends AppCompatActivity {
                             }
                         });
                     }
-
+                    passengerRef.updateChildren(userUpdates);
                     finish();
 
                 } else {
@@ -387,11 +394,13 @@ public class EditProfileActivity extends AppCompatActivity {
         if(requestCode == 1007 &&resultCode == Activity.RESULT_OK){
             final Uri imageGalleryUri = data.getData();
             resultUri = imageGalleryUri;
+            resultBitmap = null;
             civProfile.setImageURI(imageGalleryUri);
         } else if(requestCode == 1008 &&resultCode == Activity.RESULT_OK){
-            final Uri imageCapturedUri = data.getData();
-            resultUri = imageCapturedUri;
-            civProfile.setImageURI(imageCapturedUri);
+            Bundle extras = data.getExtras();
+            resultBitmap = (Bitmap) extras.get("data");
+            resultUri = null;
+            civProfile.setImageBitmap(resultBitmap);
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            mImageView.setImageBitmap(imageBitmap);
