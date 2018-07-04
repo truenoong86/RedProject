@@ -232,10 +232,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                             Double dayPrice = Double.parseDouble(day_price[i]);
                             Double discountedPrice = dayPrice-userPromo;
                             tvServicePrice.setText(discountedPrice.toString());
-                        } else {
-                            Double nightPrice = Double.parseDouble(night_price[i]);
-                            Double discountedPrice = nightPrice-userPromo;
-                            tvServicePrice.setText(discountedPrice.toString());
                         }
                         dialog.dismiss();
                     }
