@@ -2,11 +2,13 @@ package com.example.trueno.redproject.models;
 
 public class Services {
     private String service;
-    private double price;
+    private String day_price;
+    private String night_price;
 
-    public Services(String service, double price) {
+    public Services(String service, String day_price , String night_price) {
         this.service = service;
-        this.price = price;
+        this.day_price = day_price;
+        this.night_price = night_price;
     }
 
     public String getService() {
@@ -17,11 +19,20 @@ public class Services {
         this.service = service;
     }
 
-    public double getPrice() {
-        return price;
+    public String getDay_price() {
+        return day_price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setDay_price(String day_price) {
+        this.day_price = day_price;
     }
+
+    public String getNight_price() {
+        return night_price;
+    }
+
+    public void setNight_price(String night_price) {
+        this.night_price = night_price;
+    }
+
 }

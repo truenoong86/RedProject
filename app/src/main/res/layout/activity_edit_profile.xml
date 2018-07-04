@@ -40,7 +40,7 @@
                 android:gravity="center_horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/profile_image"
+                    android:id="@+id/civProfile"
                     android:layout_width="98dp"
                     android:layout_height="98dp"
                     android:src="@mipmap/ic_launcher_round" />
@@ -137,7 +137,11 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingStart="5dp"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
 
                 <TextView
                     android:layout_width="310dp"
@@ -175,20 +179,13 @@
                         android:textSize="16dp"
                         android:layout_weight="1" />
 
-                    <TextView
+                    <Spinner
+                        android:id="@+id/spnVehicleMake"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Vehicle Make"
-                        android:textColor="#000"
-                        android:textSize="14dp"
                         android:layout_weight="1"
-                        android:gravity="right" />
+                        android:prompt="@string/vehicle_make_prompt"/>
 
-                    <ImageView
-                        android:layout_width="10.66dp"
-                        android:layout_height="5.33dp"
-                        android:src="@mipmap/down_arrow" />
-                    
                 </LinearLayout>
 
                 <LinearLayout
@@ -206,17 +203,12 @@
                         android:textSize="16dp"
                         android:layout_weight="1" />
 
-                    <EditText
-                        android:id="@+id/etVehicleModel"
-                        android:layout_width="77dp"
-                        android:layout_height="35dp"
-                        android:background="@drawable/rounded_edit_text_background"
-                        android:textSize="14dp"
-                        android:textColor="#000"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp" />
+                    <Spinner
+                        android:id="@+id/spnVehicleModel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:prompt="@string/vehicle_model_prompt"/>
 
                 </LinearLayout>
 
@@ -235,19 +227,12 @@
                         android:textSize="16dp"
                         android:layout_weight="1" />
 
-                    <TextView
+                    <Spinner
+                        android:id="@+id/spnYearOfManufacture"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2015"
-                        android:textColor="#000"
-                        android:textSize="14dp"
                         android:layout_weight="1"
-                        android:gravity="right" />
-
-                    <ImageView
-                        android:layout_width="10.66dp"
-                        android:layout_height="5.33dp"
-                        android:src="@mipmap/down_arrow" />
+                        android:prompt="@string/vehicle_manufacture_year_prompt"/>
 
                 </LinearLayout>
 
@@ -266,19 +251,12 @@
                         android:textSize="16dp"
                         android:layout_weight="1" />
 
-                    <TextView
+                    <Spinner
+                        android:id="@+id/spnTyreSize"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="205/40R17"
-                        android:textColor="#000"
-                        android:textSize="14dp"
                         android:layout_weight="1"
-                        android:gravity="right" />
-
-                    <ImageView
-                        android:layout_width="10.66dp"
-                        android:layout_height="5.33dp"
-                        android:src="@mipmap/down_arrow" />
+                        android:prompt="@string/vehicle_tyre_size_prompt"/>
 
                 </LinearLayout>
 
@@ -297,19 +275,12 @@
                         android:textSize="16dp"
                         android:layout_weight="1" />
 
-                    <TextView
+                    <Spinner
+                        android:id="@+id/spnInsurance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="ABC Insurance"
-                        android:textColor="#000"
-                        android:textSize="14dp"
                         android:layout_weight="1"
-                        android:gravity="right" />
-
-                    <ImageView
-                        android:layout_width="10.66dp"
-                        android:layout_height="5.33dp"
-                        android:src="@mipmap/down_arrow" />
+                        android:prompt="@string/vehicle_insurance_prompt"/>
 
                 </LinearLayout>
                 

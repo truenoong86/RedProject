@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trueno.redproject.CashActivity;
+import com.example.trueno.redproject.EditProfileActivity;
 import com.example.trueno.redproject.PlaceAutocompleteAdapter;
 import com.example.trueno.redproject.R;
 import com.example.trueno.redproject.RideDetailsActivity;
@@ -89,10 +90,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_OK;
 import static java.lang.Double.parseDouble;
 
 /**
@@ -159,7 +163,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         // Required empty public constructor
     }
 
-    String[] services = {"Tow (Accident)", "Tow (Breakdown)", "Tyre Mending", "Spare Tyre Replacement", "Battery Jump Start", "Battery Replacement", "Others"};
+
+    String userRemarks = "None";
+    int userPromo = 0;
+    String userPaymentPref = "Cash";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -188,6 +195,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mServicesList = new ArrayList<>();
         mapFragment.getMapAsync(this);
 
+
         singleLineCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -198,22 +206,28 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 lvServices = (ListView) mView.findViewById(R.id.lvServices);
 
-                final String[] services = new String[] { "Tow (Accident)",
-                        "Tow (Breakdown)",
-                        "Tyre Mending",
-                        "Spare Tyre Replacement",
-                        "Battery Jump Start",
-                        "Battery Replacement",
-                        "Others"
-                };
 
-                lvServices.setAdapter(new CustomListAdapter(getContext(), services));
+                ArrayList<Services> servicesList = new ArrayList<>();
+                final String[] services = {"Tow (Accident)", "Tow (Breakdown)", "Tyre Mending", "Spare Tyre Replacement", "Battery Jump Start", "Battery Replacement", "Others"};
+                final String[] day_price = {"60","165","45","55","55","55","70"};
+                final String[] night_price = {"70","175","55","65","65","65","80"};
+                for(int i=0;i<services.length; i++){
+                    servicesList.add(new Services(services[i],day_price[i],night_price[i]));
+                }
+                Log.i("String services",servicesList+"");
+                lvServices.setAdapter(new CustomListAdapter(getContext(), servicesList));
 
                 lvServices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        TextView tvTitle = getActivity().findViewById(R.id.tvServiceType);
-                        tvTitle.setText(lvServices.getItemAtPosition(i)+"");
+                        TextView tvType = getActivity().findViewById(R.id.tvServiceType);
+                        TextView tvPrice = getActivity().findViewById(R.id.tvServicePrice);
+                        tvType.setText(services[i]);
+                        if(checkIsDay()){
+                            tvPrice.setText(day_price[i]);
+                        } else {
+                            tvPrice.setText(night_price[i]);
+                        }
                         dialog.dismiss();
                     }
                 });
@@ -225,7 +239,11 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         cashLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), CashActivity.class));
+                //startActivity(new Intent(getActivity(), CashActivity.class));
+                TextView tvPref = getView().findViewById(R.id.tvPaymentPref);
+                Intent i = new Intent(getActivity(), CashActivity.class);
+                i.putExtra("paymentPref", tvPref.getText().toString());
+                startActivityForResult(i, 1005);
             }
         });
 
@@ -255,6 +273,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     @Override
                     public void onClick(View v) {
                         tvRemarks.setText(etRemarks.getText().toString());
+                        userRemarks = etRemarks.getText().toString();
                         dialog.dismiss();
                     }
                 });
@@ -287,10 +306,15 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     public void onClick(View v) {
                         tvPromo.setText(etPromo.getText().toString());
 
-                        if (tvPromo.getText().toString() == "5OFF") {
+                        if (tvPromo.getText().toString().equalsIgnoreCase("5OFF")) {
                             promoDeduction = 5;
-                        } else if (tvPromo.getText().toString() == "10OFF") {
+                            userPromo = 5;
+                            Toast.makeText(getContext(), "5% discount coupon", Toast.LENGTH_SHORT).show();
+                        } else if (tvPromo.getText().toString().equalsIgnoreCase("10OFF")) {
                             promoDeduction = 10;
+                            userPromo = 10;
+                            Toast.makeText(getContext(), "10% discount coupon", Toast.LENGTH_SHORT).show();
+
                         } else {
                             Toast.makeText(getContext(), "Invalid coupon", Toast.LENGTH_SHORT).show();
                         }
@@ -312,6 +336,48 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 dialog.show();
 
                 btnConfirmBooking = dialog.findViewById(R.id.btnConfirmBooking);
+
+                final TextView tvVehicleNumber,tvVehicleMakeModel, tvFrom, tvTo, tvEditDetails;
+                tvVehicleNumber = mView.findViewById(R.id.tvVehicleNumber);
+                tvVehicleMakeModel = mView.findViewById(R.id.tvVehicleMakeModel);
+                tvFrom = mView.findViewById(R.id.tvFrom);
+                tvTo = mView.findViewById(R.id.tvTo);
+                tvEditDetails = mView.findViewById(R.id.tvEditDetails);
+
+                String passengerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(passengerId);
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot != null){
+                            String make = dataSnapshot.child("vehicleMake").getValue().toString();
+                            String model = dataSnapshot.child("vehicleModel").getValue().toString();
+                            tvVehicleMakeModel.setText(make + " " + model);
+                            tvVehicleNumber.setText(dataSnapshot.child("vehicleNumber").getValue().toString());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                tvFrom.setText(acCurrentLocation.getText().toString());
+                tvTo.setText(acDestination.getText().toString());
+                tvEditDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent i = new Intent(getActivity(), EditProfileActivity.class);
+                        i.putExtra("come from","btnProceed");
+                        dialog.dismiss();
+                        startActivityForResult(i,1006);
+
+                    }
+                });
+
+
 
                 close = (android.support.v7.widget.Toolbar) dialog.findViewById(R.id.close);
 
@@ -343,9 +409,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         return view;
     }
 
-    class CustomListAdapter extends ArrayAdapter<String> {
 
-        public CustomListAdapter(Context context, String[] services) {
+    class CustomListAdapter extends ArrayAdapter<Services> {
+
+        public CustomListAdapter(Context context, ArrayList<Services> services) {
             super(context, R.layout.custom_row, services);
         }
 
@@ -355,10 +422,17 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             LayoutInflater servicesInflater = LayoutInflater.from(getContext());
             View customView = servicesInflater.inflate(R.layout.custom_row, parent, false);
 
-            String singleServiceItem = getItem(position);
+            Services singleServiceItem = getItem(position);
 
             TextView tvServices = (TextView) customView.findViewById(R.id.tvServices);
-            tvServices.setText(singleServiceItem);
+            tvServices.setText(singleServiceItem.getService());
+
+            TextView tvPrices = (TextView) customView.findViewById(R.id.tvPrice);
+            if(checkIsDay()){
+                tvPrices.setText("$"+singleServiceItem.getDay_price());
+            } else {
+                tvPrices.setText("$"+singleServiceItem.getNight_price());
+            }
 
             return customView;
         }
@@ -565,7 +639,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         }
                     });
 
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your driver").icon(BitmapDescriptorFactory.fromResource(R.drawable.car_image)));
 
                 }
             }
@@ -637,8 +711,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 //onChildAdded,onChildMoved,onChildChanged == Adding new availableDriver;
                 //onChildChanged = change long or lat of availableDriver;
                 //onChildRemoved = removing data
-
-
                 ref.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -667,26 +739,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Log.i("onChildChanged",dataSnapshot.toString());
 
-//                        if(dataSnapshot.exists()){
-//
-//                            String changedKey = dataSnapshot.getKey();
-//
-//                            double newLocationLat = 0;
-//                            double newLocationLng = 0;
-//
-//                            if(dataSnapshot.child("l").child("0").getValue() != null) {
-//                                newLocationLat = Double.parseDouble(dataSnapshot.child("l").child("0").getValue().toString());
-//                            }
-//                            if(dataSnapshot.child("l").child("1").getValue() != null) {
-//                                newLocationLng = Double.parseDouble(dataSnapshot.child("l").child("1").getValue().toString());
-//                            }
-//
-//                            Log.i("LatLng",newLocationLat+" "+newLocationLng);
-//
-//                            final GeoFire geoFire = new GeoFire(ref);
-//                            geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(newLocationLat, newLocationLng));
-////
-//                        }
 
                     }
 
@@ -895,13 +947,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     @Override
     public void onLocationChanged(Location location) {
         Log.i("Called","onLocationChanged()");
-        mLastLocation = location;
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-        startIntentService();
     }
 
     @Override
@@ -1004,8 +1049,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         super.onPause();
         Log.i("Called","onPause()");
 
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.stopAutoManage(getActivity());
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
@@ -1075,7 +1122,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         userLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
         final GeoFire geoFire = new GeoFire(driverLocationRef);
-        geoFire.setLocation("iTCQkWMjqtSAt6ZER6R39tnC6xs1", new GeoLocation(1.334858, 103.884722));
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userLocation.latitude, userLocation.longitude), 1000);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
@@ -1093,7 +1139,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
                 Marker mDriverMarker = mMap.addMarker(new MarkerOptions()
                         .position(driverLocation)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        .icon((BitmapDescriptorFactory.fromResource(R.drawable.car_image )))
                 );
 
                 //Tags the id of the driver in the marker, Remove after testing
@@ -1195,11 +1241,40 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     }
 
+    public Boolean checkIsDay(){
+
+        int dayFrom = 700;
+        int dayTo = 2300;
+
+        Date date = new Date();
+        Calendar c = Calendar.getInstance();
+        Log.i("date now!",c.toString());
+        c.setTime(date);
+        int t = c.get(Calendar.HOUR_OF_DAY) * 100 + c.get(Calendar.MINUTE);
+        Log.i("time now!",t+"");
+        boolean isDay = dayTo > dayFrom && t >= dayFrom && t <= dayTo || dayTo < dayFrom && (t >= dayFrom || t <= dayTo);
+        return isDay;
+    }
+
     protected void startIntentService() {
         Intent intent = new Intent(getContext(), FetchAddressIntentService.class);
         mResultReceiver = new AddressResultReceiver(new Handler());
         intent.putExtra(Constants.RECEIVER, mResultReceiver);
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
         getContext().startService(intent);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1005) {
+            if(resultCode == RESULT_OK) {
+                String paymentPref = data.getStringExtra("paymentPref");
+                TextView tvPref = getView().findViewById(R.id.tvPaymentPref);
+                userPaymentPref = paymentPref;
+                tvPref.setText(paymentPref);
+            }
+        } else if (requestCode == 1006) {
+            btnProceed.performClick();
+        }
     }
 }

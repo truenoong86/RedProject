@@ -19,18 +19,28 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.trueno.redproject.homefragments.Card;
 import com.example.trueno.redproject.homefragments.Faq;
 import com.example.trueno.redproject.homefragments.History;
 import com.example.trueno.redproject.homefragments.Home;
 import com.example.trueno.redproject.homefragments.Support;
+import com.example.trueno.redproject.models.User;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tvViewProfile;
+    TextView tvViewProfile,tvName;
+    CircleImageView civProfile;
     FragmentTransaction ft;
     DrawerLayout drawerLayout;
 
@@ -44,6 +54,34 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.left_drawer);
         View headerView = navigationView.getHeaderView(0);
         tvViewProfile = (TextView) headerView.findViewById(R.id.tvViewProfile);
+        tvName = headerView.findViewById(R.id.tvName);
+        civProfile = headerView.findViewById(R.id.profile_image);
+
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference cardDetailsRef = database.getReference("/user").child("passenger");
+        final String passengerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        cardDetailsRef.child(passengerId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User currUserProfile = dataSnapshot.getValue(com.example.trueno.redproject.models.User.class);
+                        tvName.setText(currUserProfile.getName());
+
+                        if(dataSnapshot.hasChild("profileImageUrl")){
+                            if(!currUserProfile.getProfileImageUrl().equalsIgnoreCase("No Image")){
+                                Glide.with(getApplication()).load(currUserProfile.getProfileImageUrl()).into(civProfile);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
         tvViewProfile.setText(Html.fromHtml("<u>View Profile</u>"));
 

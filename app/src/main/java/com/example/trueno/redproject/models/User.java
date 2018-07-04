@@ -8,25 +8,43 @@ public class User implements Serializable{
     private String phone;
     private String email;
     private String vehicleNumber;
+    private String vehicleMake;
     private String vehicleModel;
     private String tyreSize;
     private String insuranceCompany;
     private String yearOfManufacture;
+    private String profileImageUrl;
 
     public User(){
 
     }
 
-    public User(String name, String countryCode, String phone, String email, String vehicleNumber, String vehicleModel, String tyreSize, String insuranceCompany, String yearOfManufacture) {
+    public User(String name, String countryCode, String phone, String email, String vehicleNumber, String vehicleMake ,String vehicleModel, String tyreSize, String insuranceCompany, String yearOfManufacture) {
         this.name = name;
         this.countryCode = countryCode;
         this.phone = phone;
         this.email = email;
         this.vehicleNumber = vehicleNumber;
+        this.vehicleMake = vehicleMake;
         this.vehicleModel = vehicleModel;
         this.tyreSize = tyreSize;
         this.insuranceCompany = insuranceCompany;
         this.yearOfManufacture = yearOfManufacture;
+        this.profileImageUrl = "No Image";
+    }
+
+    public User(String name, String countryCode, String phone, String email, String vehicleNumber, String vehicleMake ,String vehicleModel, String tyreSize, String insuranceCompany, String yearOfManufacture, String profileImageUrl) {
+        this.name = name;
+        this.countryCode = countryCode;
+        this.phone = phone;
+        this.email = email;
+        this.vehicleNumber = vehicleNumber;
+        this.vehicleMake = vehicleMake;
+        this.vehicleModel = vehicleModel;
+        this.tyreSize = tyreSize;
+        this.insuranceCompany = insuranceCompany;
+        this.yearOfManufacture = yearOfManufacture;
+        this.profileImageUrl = profileImageUrl;
     }
 
 
@@ -71,6 +89,10 @@ public class User implements Serializable{
         this.vehicleNumber = vehicleNumber;
     }
 
+    public String getVehicleMake(){ return vehicleMake;}
+
+    public void setVehicleMake(String vehicleMake){this.vehicleMake = vehicleMake;}
+
     public String getVehicleModel() {
         return vehicleModel;
     }
@@ -102,6 +124,16 @@ public class User implements Serializable{
     public void setYearOfManufacture(String yearOfManufacture) {
         this.yearOfManufacture = yearOfManufacture;
     }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+
 
 
 }

@@ -28,40 +28,87 @@
             android:textSize="16dp" />
 
     </RelativeLayout>
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/toolbarLayout"
-        android:padding="15dp">
-        
-        <ImageView
-            android:layout_width="37.23dp"
-            android:layout_height="19.95dp"
-            android:src="@mipmap/cash"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cash"
-            android:textColor="#000"
-            android:textSize="14dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"/>
+        android:orientation="vertical"
+        android:layout_below="@+id/toolbarLayout">
 
         <LinearLayout
+            android:id="@+id/layoutCash"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbarLayout"
+            android:orientation="horizontal"
+            android:padding="15dp">
 
             <ImageView
-                android:layout_width="26.56dp"
-                android:layout_height="26.67dp"
-                android:src="@drawable/check"/>
+                android:layout_width="37.23dp"
+                android:layout_height="19.95dp"
+                android:src="@mipmap/cash" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Cash"
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right">
+
+                <ImageView
+                    android:id="@+id/cashCheck"
+                    android:layout_width="26.56dp"
+                    android:layout_height="26.67dp"
+                    android:src="@drawable/check" />
+
+            </LinearLayout>
 
         </LinearLayout>
-        
+
+        <LinearLayout
+            android:id="@+id/layoutCard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbarLayout"
+            android:orientation="horizontal"
+            android:padding="15dp">
+
+            <ImageView
+                android:layout_width="37.23dp"
+                android:layout_height="19.95dp"
+                android:src="@mipmap/cash" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Card"
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right">
+
+                <ImageView
+                    android:id="@+id/cardCheck"
+                    android:layout_width="26.56dp"
+                    android:layout_height="26.67dp"
+                    android:src="@drawable/check" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
+
 
 </RelativeLayout>

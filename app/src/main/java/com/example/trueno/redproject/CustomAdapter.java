@@ -43,7 +43,7 @@ class CustomAdapter extends BaseAdapter {
         TextView tvPrice = (TextView)v.findViewById(R.id.tvPrice);
 
         tvServices.setText(mServicesList.get(position).getService());
-        tvPrice.setText("$" + String.valueOf(mServicesList.get(position).getPrice()));
+        tvPrice.setText("$" + Double.valueOf(mServicesList.get(position).getDay_price()));
 
         return v;
     }

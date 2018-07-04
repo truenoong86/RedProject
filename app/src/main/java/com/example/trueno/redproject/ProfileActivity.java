@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.trueno.redproject.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -15,11 +16,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ProfileActivity extends AppCompatActivity {
 
     TextView tvEditProfile;
-    TextView tvTopName,tvName,tvCountryCode, tvPhone, tvEmail,tvVNum,tvVModel,tvYear,tvTyre,tvInsurance;
+    TextView tvTopName,tvName,tvCountryCode, tvPhone, tvEmail,tvVNum,tvVMake,tvVModel,tvYear,tvTyre,tvInsurance;
     private android.support.v7.widget.Toolbar back;
+    CircleImageView civProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +39,13 @@ public class ProfileActivity extends AppCompatActivity {
         tvPhone = findViewById(R.id.tvPhone);
         tvEmail = findViewById(R.id.tvEmail);
         tvVNum = findViewById(R.id.tvVehicleNumber);
+        tvVMake = findViewById(R.id.tvVehicleMake);
         tvVModel = findViewById(R.id.tvVehicleModel);
         tvYear = findViewById(R.id.tvYearOfManufacture);
         tvTyre =findViewById(R.id.tvTyreSize);
         tvInsurance = findViewById(R.id.tvInsuranceCompany);
+
+        civProfile = findViewById(R.id.profile_image);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference cardDetailsRef = database.getReference("/user").child("passenger");
@@ -55,11 +62,18 @@ public class ProfileActivity extends AppCompatActivity {
                         tvCountryCode.setText(currUserProfile.getCountryCode());
                         tvPhone.setText(currUserProfile.getPhone());
                         tvEmail.setText(currUserProfile.getEmail());
+                        tvVMake.setText(currUserProfile.getVehicleMake());
                         tvVModel.setText(currUserProfile.getVehicleModel());
                         tvVNum.setText(currUserProfile.getVehicleNumber());
                         tvYear.setText(currUserProfile.getYearOfManufacture());
                         tvTyre.setText(currUserProfile.getTyreSize());
                         tvInsurance.setText(currUserProfile.getInsuranceCompany());
+
+                        if(dataSnapshot.hasChild("profileImageUrl")){
+                            if(!currUserProfile.getProfileImageUrl().equalsIgnoreCase("No Image")){
+                                Glide.with(getApplication()).load(currUserProfile.getProfileImageUrl()).into(civProfile);
+                            }
+                        }
                     }
 
                     @Override
@@ -71,7 +85,8 @@ public class ProfileActivity extends AppCompatActivity {
         tvEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
+            //startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
+            startActivityForResult(new Intent(ProfileActivity.this , EditProfileActivity.class), 0);
             }
         });
 
@@ -81,5 +96,14 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             }
         });
+
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data){
+        Intent refresh = new Intent(this, ProfileActivity.class);
+        startActivity(refresh);
+        this.finish();
     }
 }
