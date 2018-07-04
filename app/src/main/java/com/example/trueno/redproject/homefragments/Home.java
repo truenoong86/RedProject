@@ -276,11 +276,12 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         TextView tvType = getActivity().findViewById(R.id.tvServiceType);
                         tvType.setText(services[i]);
                         if(checkIsDay()){
-                            tvServicePrice.setText(day_price[i]);
-                        } else {
-                            tvServicePrice.setText(night_price[i]);
                             Double dayPrice = Double.parseDouble(day_price[i]);
                             Double discountedPrice = dayPrice-userPromo;
+                            tvServicePrice.setText(discountedPrice.toString());
+                        } else {
+                            Double nightPrice = Double.parseDouble(night_price[i]);
+                            Double discountedPrice = nightPrice-userPromo;
                             tvServicePrice.setText(discountedPrice.toString());
                         }
                         dialog.dismiss();
@@ -677,6 +678,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                             cancelBookingRef.removeValue();
                             btnProceed.setVisibility(View.GONE);
                             cvAccepted.setVisibility(View.GONE);
+                            afterChoosingLocation.setVisibility(View.GONE);
                             dialog.dismiss();
                         }
                     });
@@ -830,6 +832,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                             cancelBookingRef.removeValue();
                             btnProceed.setVisibility(View.GONE);
                             cvAccepted.setVisibility(View.GONE);
+                            afterChoosingLocation.setVisibility(View.GONE);
                         }
                     });
 
