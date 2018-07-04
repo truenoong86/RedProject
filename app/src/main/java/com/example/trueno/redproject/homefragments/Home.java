@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -127,6 +128,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     AutoCompleteTextView acCurrentLocation, acDestination;
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard, cvDriverInfo, cvAccepted;
     TextView tvDriverName, tvViewDetails, tvServiceType, tvServicePrice, tvPromo, tvRemarks;
+    TextView tvPromoText,tvRemarksText;
     EditText etRemarks, etPromo;
     Button btnProceed, btnConfirmBooking, btnCancel, btnConfirm;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
@@ -163,7 +165,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         // Required empty public constructor
     }
 
-    String userRemarks = "None";
+    String userRemarks = "";
     int userPromo = 0;
     String userPaymentPref = "Cash";
 
@@ -227,6 +229,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                             tvServicePrice.setText(day_price[i]);
                         } else {
                             tvServicePrice.setText(night_price[i]);
+                            Double dayPrice = Double.parseDouble(day_price[i]);
+                            Double discountedPrice = dayPrice-userPromo;
+                            tvServicePrice.setText(discountedPrice.toString());
+                        } else {
+                            Double nightPrice = Double.parseDouble(night_price[i]);
+                            Double discountedPrice = nightPrice-userPromo;
+                            tvServicePrice.setText(discountedPrice.toString());
                         }
                         dialog.dismiss();
                     }
@@ -262,6 +271,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
                 btnConfirm = (Button) dialog.findViewById(R.id.btnConfirm);
 
+                etRemarks.setText(userRemarks);
+
                 btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -273,7 +284,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     @Override
                     public void onClick(View v) {
                         tvRemarks.setText(etRemarks.getText().toString());
-                        userRemarks = etRemarks.getText().toString();
+                        if(etRemarks.getText().toString().length() > 0){
+                            userRemarks = etRemarks.getText().toString();
+                            tvRemarksText.setTextColor(Color.GREEN);
+                        } else {
+                            userRemarks = "";
+                            tvRemarksText.setTextColor(Color.BLACK);
+                        }
                         dialog.dismiss();
                     }
                 });
@@ -309,11 +326,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         if (tvPromo.getText().toString().equalsIgnoreCase("5OFF")) {
                             promoDeduction = 5;
                             userPromo = 5;
-                            Toast.makeText(getContext(), "5% discount coupon", Toast.LENGTH_SHORT).show();
+                            tvPromoText.setText("5OFF");
+                            Toast.makeText(getContext(), "$5 discount coupon", Toast.LENGTH_SHORT).show();
                         } else if (tvPromo.getText().toString().equalsIgnoreCase("10OFF")) {
                             promoDeduction = 10;
                             userPromo = 10;
-                            Toast.makeText(getContext(), "10% discount coupon", Toast.LENGTH_SHORT).show();
+                            tvPromoText.setText("10OFF");
+                            Toast.makeText(getContext(), "$10 discount coupon", Toast.LENGTH_SHORT).show();
 
                         } else {
                             Toast.makeText(getContext(), "Invalid coupon", Toast.LENGTH_SHORT).show();
