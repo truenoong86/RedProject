@@ -46,7 +46,6 @@
             android:inputType="textEmailAddress"
             android:hint="Email"
             android:padding="5dp"
-            android:text="trueno_ady@hotmail.com"
             android:background="@drawable/edit_text_background"
             android:textSize="14dp" />
 
@@ -62,7 +61,6 @@
             android:inputType="textPassword"
             android:hint="Password"
             android:padding="5dp"
-            android:text="password"
             android:background="@drawable/edit_text_background"
             android:textSize="14dp" />
 
@@ -85,7 +83,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="30dp"
-            android:text="Next"
+            android:text="Sign In"
             android:background="#6E8F00"
             android:layout_marginBottom="20dp"
             android:textSize="14dp"

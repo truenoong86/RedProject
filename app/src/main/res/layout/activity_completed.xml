@@ -42,47 +42,15 @@
             android:textColor="#000"
             android:textSize="12dp"
             android:layout_marginTop="20dp"/>
-
-        <LinearLayout
+        
+        <RatingBar
+            android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="15dp">
-
-            <ImageView
-                android:layout_width="42dp"
-                android:layout_height="39.95dp"
-                android:src="@mipmap/star_filled"/>
-
-            <ImageView
-                android:layout_width="42dp"
-                android:layout_height="39.95dp"
-                android:src="@mipmap/star_filled"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"/>
-
-            <ImageView
-                android:layout_width="42dp"
-                android:layout_height="39.95dp"
-                android:src="@mipmap/star_filled"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"/>
-
-            <ImageView
-                android:layout_width="42dp"
-                android:layout_height="39.95dp"
-                android:src="@mipmap/star_outline"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"/>
-
-            <ImageView
-                android:layout_width="42dp"
-                android:layout_height="39.95dp"
-                android:src="@mipmap/star_outline"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"/>
-
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="1"
+            android:layout_marginTop="10dp"/>
 
         <EditText
             android:id="@+id/etFeedback"

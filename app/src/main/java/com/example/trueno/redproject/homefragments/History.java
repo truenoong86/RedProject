@@ -42,7 +42,6 @@ public class History extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,9 +64,6 @@ public class History extends Fragment {
 
         mHistoryAdapter.notifyDataSetChanged();
 
-
-
-
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -81,27 +77,21 @@ public class History extends Fragment {
                     for(DataSnapshot history : dataSnapshot.getChildren()){
                         Log.i("data key", history.getKey());
 
-                        if(history.child("passenger").getValue().toString().equalsIgnoreCase(userId)){
-                            String passengerID = history.child("passenger").getValue().toString();
+                        if(history.child("passenger_uid").getValue().toString().equalsIgnoreCase(userId)){
+                            String passengerID = history.child("passenger_uid").getValue().toString();
                             Log.i("data passengerID",passengerID);
-                            String from = history.child("location").child("from").getValue().toString();
-                            String to = history.child("location").child("to").getValue().toString();
+                            String from = history.child("pickup_name").getValue().toString();
+                            String to = history.child("destination_name").getValue().toString();
                             Log.i("data location",from + " " + to);
                             String rating = history.child("rating").getValue().toString();
                             Log.i("data rating",from + " " + to);
-                            String timestamp = history.child("timestamp").getValue().toString();
+                            String timestamp = history.child("transaction_time_complete").getValue().toString();
                             Log.i("data timestmap", timestamp);
 
                             HistoryObject obj = new HistoryObject(history.getKey(),passengerID,from,to,rating,timestamp);
                             resultsHistory.add(obj);
                             mHistoryAdapter.notifyDataSetChanged();
                         }
-
-
-
-
-
-
                     }
                 }
             }

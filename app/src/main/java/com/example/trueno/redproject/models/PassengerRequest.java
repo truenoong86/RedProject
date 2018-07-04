@@ -15,12 +15,13 @@ public class PassengerRequest {
     private Double price;
     private String remarks;
     private String promo;
+    private String passengeruid;
 
     public PassengerRequest() {
 
     }
 
-    public PassengerRequest(String name, String vehicleNumber, String vehicleModel, String pickupName, Double pickupLatitude, Double pickupLongitude, String destinationName, Double destinationLatitude, Double destinationLongitude, String serviceType, String status, Double price, String remarks, String promo) {
+    public PassengerRequest(String name, String vehicleNumber, String vehicleModel, String pickupName, Double pickupLatitude, Double pickupLongitude, String destinationName, Double destinationLatitude, Double destinationLongitude, String serviceType, String status, Double price, String remarks, String promo, String passengeruid) {
         this.name = name;
         this.vehicleNumber = vehicleNumber;
         this.vehicleModel = vehicleModel;
@@ -35,6 +36,7 @@ public class PassengerRequest {
         this.price = price;
         this.remarks = remarks;
         this.promo = promo;
+        this.passengeruid = passengeruid;
     }
 
     public String getName() {
@@ -147,5 +149,13 @@ public class PassengerRequest {
 
     public void setPromo(String promo) {
         this.promo = promo;
+    }
+
+    public String getPassengeruid() {
+        return passengeruid;
+    }
+
+    public void setPassengeruid(String passengeruid) {
+        this.passengeruid = passengeruid;
     }
 }

@@ -69,14 +69,6 @@ public class ProfileActivity extends AppCompatActivity {
                         tvYear.setText(currUserProfile.getYearOfManufacture());
                         tvTyre.setText(currUserProfile.getTyreSize());
                         tvInsurance.setText(currUserProfile.getInsuranceCompany());
-
-                        Log.i("status called","refresh profile");
-                        if(dataSnapshot.hasChild("profileImageUrl")){
-                            if(!currUserProfile.getProfileImageUrl().equalsIgnoreCase("No Image")){
-                                Log.i("status called","set image");
-                                Glide.with(getApplication()).load(currUserProfile.getProfileImageUrl()).into(civProfile);
-                            }
-                        }
                     }
 
                     @Override
