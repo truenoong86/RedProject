@@ -134,8 +134,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     android.support.v7.widget.CardView afterChoosingLocation, singleLineCard, cvDriverInfo, cvAccepted;
     TextView tvDriverName, tvViewDetails, tvServiceType, tvServicePrice, tvPromo, tvRemarks, tvPromoText,tvRemarksText, tvPrice, tvAcceptedName, tvAcceptedCarPlate, tvAcceptedNumber;
     ImageView callAccepted, messageAccepted, profile_image;
-    EditText etRemarks, etPromo;
-    Button btnProceed, btnConfirmBooking, btnCancel, btnConfirm;
+    EditText etRemarks, etPromo, etFeedback;
+    Button btnProceed, btnConfirmBooking, btnCancel, btnConfirm, btnSubmitFeedback;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
     private static final LatLngBounds SINGAPORE = new LatLngBounds(
@@ -197,6 +197,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         tvAcceptedCarPlate = (TextView) view.findViewById(R.id.tvAcceptedCardPlate);
         tvAcceptedNumber = (TextView) view.findViewById(R.id.tvAcceptedNumber);
 
+        etFeedback = (EditText) view.findViewById(R.id.etFeedback);
+
         callAccepted = (ImageView) view.findViewById(R.id.callAccepted);
         messageAccepted = (ImageView) view.findViewById(R.id.messageAccepted);
         profile_image = (ImageView) view.findViewById(R.id.profile_image);
@@ -213,6 +215,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         cvDriverInfo = (android.support.v7.widget.CardView) view.findViewById(R.id.cvDriverInfo);
         cvAccepted = (android.support.v7.widget.CardView) view.findViewById(R.id.cvAccepted);
         btnProceed = (Button) view.findViewById(R.id.btnProceed);
+        btnSubmitFeedback = (Button) view.findViewById(R.id.btnSubmitFeedback);
         mServicesList = new ArrayList<>();
         mapFragment.getMapAsync(this);
 
@@ -479,6 +482,16 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         dialog.dismiss();
                     }
                 });
+            }
+        });
+
+        btnSubmitFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tripCompleted.setVisibility(View.GONE);
+
+                //Damian please continue
+                // Save the feedback details into the firebase database thx
             }
         });
 

@@ -516,6 +516,7 @@
                     android:textSize="12dp"/>
 
                 <Button
+                    android:id="@+id/btnSubmitFeedback"
                     android:layout_width="310dp"
                     android:layout_height="51dp"
                     android:background="#6E8F00"
