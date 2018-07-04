@@ -489,7 +489,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             @Override
             public void onClick(View v) {
                 tripCompleted.setVisibility(View.GONE);
-
+                cvAccepted.setVisibility(View.GONE);
+                acDestination.setText("");
                 //Damian please continue
                 // Save the feedback details into the firebase database thx
             }
