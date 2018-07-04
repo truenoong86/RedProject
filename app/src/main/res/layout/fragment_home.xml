@@ -293,67 +293,69 @@
                     android:layout_height="90dp"
                     android:layout_marginBottom="10dp"
                     android:paddingLeft="15dp"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
                         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                             android:id="@+id/profile_image"
                             android:layout_width="67dp"
                             android:layout_height="67dp"
-                            android:src="@mipmap/ic_launcher_round"
+                            android:layout_marginEnd="15dp"
                             android:layout_marginLeft="15dp"
-                            android:layout_marginStart="15dp"
                             android:layout_marginRight="15dp"
-                            android:layout_marginEnd="15dp"/>
-                        
+                            android:layout_marginStart="15dp"
+                            android:src="@mipmap/ic_launcher_round" />
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:orientation="vertical"
+                            android:layout_weight="1"
                             android:gravity="left|center_vertical"
-                            android:layout_weight="1">
-                            
+                            android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Aqil Tahir"
                                 android:textColor="#000"
-                                android:textSize="16dp"/>
+                                android:textSize="16dp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="SJB1453J"
                                 android:textColor="#000"
-                                android:textSize="12dp"/>
+                                android:textSize="12dp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Tow Truck"
                                 android:textColor="#000"
-                                android:textSize="12dp"/>
-                            
+                                android:textSize="12dp" />
+
                         </LinearLayout>
 
                         <ImageView
+                            android:id="@+id/ivPhone"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
-                            android:src="@mipmap/call"
+                            android:layout_marginEnd="20dp"
                             android:layout_marginRight="20dp"
-                            android:layout_marginEnd="20dp"/>
+                            android:src="@mipmap/call" />
 
                         <ImageView
+                            android:id="@+id/ivMessage"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
-                            android:src="@mipmap/message"
+                            android:layout_marginEnd="20dp"
                             android:layout_marginRight="20dp"
-                            android:layout_marginEnd="20dp"/>
+                            android:src="@mipmap/message" />
 
                     </LinearLayout>
 

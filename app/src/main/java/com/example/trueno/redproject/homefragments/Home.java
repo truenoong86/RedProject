@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -30,6 +31,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -149,6 +151,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     private AddressResultReceiver mResultReceiver;
 
+    ImageView ivPhone, ivMessage;
+
     public final class Constants {
         public static final int SUCCESS_RESULT = 0;
         public static final int FAILURE_RESULT = 1;
@@ -199,6 +203,49 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         tvPromoText = view.findViewById(R.id.tvPromoText);
         tvRemarksText = view.findViewById(R.id.tvRemarksText);
+
+        //Waiting for pickup navbar
+        ivPhone.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                FirebaseDatabase.getInstance().getReference().child("trip")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String passengerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    if(snapshot.child("passengerID").getValue() == passengerID){
+                                        final String driverID = snapshot.getKey();
+                                        FirebaseDatabase.getInstance().getReference().child("user").child("driver")
+                                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                            if(driverID == snapshot.getKey()){
+                                                                String phoneNo = snapshot.child("phone_number").getValue().toString();
+                                                                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNo, null));
+                                                                startActivity(intent);
+                                                            }
+                                                        }
+                                                    }
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+                                                    }
+                                                });
+
+
+
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+
+            }
+        });
 
 
         singleLineCard.setOnClickListener(new View.OnClickListener() {
