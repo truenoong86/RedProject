@@ -85,6 +85,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -118,6 +119,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     private Boolean requestBol = false;
     private String driverFoundId;
     private int promoDeduction = 0;
+    private String tag = " --->> Gunjan Testing ";
     private Marker mDriverMarker, mFoundDriverMarker;
     private DatabaseReference requestListRef;
     android.support.v7.widget.Toolbar close;
@@ -158,7 +160,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
     public final class Constants {
         public static final int SUCCESS_RESULT = 0;
-        public static final int FAILURE_RESULT = 1;
+        public static final int FAILURE_RESULT = 1  ;
         public static final String PACKAGE_NAME =
                 "com.google.android.gms.location.sample.locationaddress";
         public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
@@ -595,7 +597,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 
         requestListRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId).child("l");
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest");
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference passUserToDriverRef = FirebaseDatabase.getInstance().getReference().child("user").child("passenger");
 
         final String location = acDestination.getText().toString();
@@ -613,6 +615,22 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 PassengerRequest passengerRequestList = dataSnapshot.getValue(PassengerRequest.class);
+
+                final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("user").child("passenger").child(userId);
+                userRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        Log.e(tag,"Userref "+String.valueOf(dataSnapshot.child("name")) );
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
                 String name = passengerRequestList.getName();
                 String vehicleNumber = passengerRequestList.getVehicleNumber();
                 String vehicleModel = passengerRequestList.getVehicleModel();
@@ -757,6 +775,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                         public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
 
                             final String status = dataSnapshot.getValue(String.class);
+                            Log.d(tag, "onDataChange: STATUS "+ status);
 
                             nextDriverRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -850,7 +869,12 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                                                         }
                                                     }
 
-                                                    Glide.with(getContext()).load(driverFoundId).into(profile_image);
+                                                    if(driverFoundId.isEmpty()){
+                                                        Log.e(tag,"Driver ID is empaty");
+                                                    }else{
+                                                        Log.e(tag,"Driver ID is empty"+ driverFoundId);
+                                                    }
+                                                    //Glide.with(getContext()).load(driverFoundId).into(profile_image);
 
 
                                                 }
@@ -896,10 +920,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     statusRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            final String status = dataSnapshot.getValue(String.class);
+                            final String status =  String.valueOf(dataSnapshot.getValue());
+                            Log.e(tag,"STATUS :"+status);
 
                             if (status.equals("completed")) {
                                 tripCompleted.setVisibility(View.VISIBLE);
+
+                               // FirebaseDatabase.getInstance().getReference().child("trip").child(driverFoundId).removeValue();
                             }
                         }
 
@@ -912,8 +939,8 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                     btnProceed.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            DatabaseReference cancelBookingRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId);
-                            cancelBookingRef.removeValue();
+//                            DatabaseReference cancelBookingRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest").child(driverFoundId);
+//                            cancelBookingRef.removeValue();
                             btnProceed.setVisibility(View.GONE);
                             cvAccepted.setVisibility(View.GONE);
                             afterChoosingLocation.setVisibility(View.GONE);
