@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">RedProject</string>
-    <string name="facebook_app_id">1135358803272489</string>
-    <string name="fb_login_protocol_scheme">fb1135358803272489</string>
+    <string name="app_name">Extra Mile </string>
+    <string name="facebook_app_id">1710217792349098</string>
+    <string name="fb_login_protocol_scheme">fb1710217792349098</string>
 
     <string name="firebase_status_fmt">Firebase User: %s</string>
     <string name="firebase_user_management">Firebase User Management</string>

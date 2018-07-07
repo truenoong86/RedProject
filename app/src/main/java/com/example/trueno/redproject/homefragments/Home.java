@@ -233,7 +233,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
 //                        .addListenerForSingleValueEvent(new ValueEventListener() {
 //                            @Override
 //                            public void onDataChange(DataSnapshot dataSnapshot) {
-//                                String passengerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//                                String passengerID = FirebaseAuth.getInstance().().getUid();
 //                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 //                                    if(snapshot.child("passengerID").getValue() == passengerID){
 //                                        final String driverID = snapshot.getKey();
@@ -490,9 +490,13 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         btnSubmitFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tripCompleted.setVisibility(View.GONE);
-                cvAccepted.setVisibility(View.GONE);
-                acDestination.setText("");
+                    //tripCompleted.setVisibility(View.GONE);
+                    //cvAccepted.setVisibility(View.GONE);
+                    acDestination.setText("");
+
+
+
+
                 //Damian please continue
                 // Save the feedback details into the firebase database thx
             }
@@ -599,6 +603,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("passengerRequest");
         final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference passUserToDriverRef = FirebaseDatabase.getInstance().getReference().child("user").child("passenger");
+
+
+        Log.e(tag,"--->>  "+ passUserToDriverRef.child("name"));
+
 
         final String location = acDestination.getText().toString();
         Geocoder gc = new Geocoder(getContext());
@@ -991,6 +999,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         acDestination.setAdapter(mPlaceAutocompleteAdapter);
+        acCurrentLocation.setAdapter(mPlaceAutocompleteAdapter);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
@@ -1271,7 +1280,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
     }
 
     /*
-    -------------------------------Google places API autocomplete suggestions-------------------------------
+    -------------------------------Google places API autocomplete suggautoestions-------------------------------
     */
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {

@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvHeader"
+                android:id="@+id/tvHeader1"
                 android:text="How do we go about accepting a request?"
                 android:textSize="16dp"
                 android:textColor="#6E8F00"/>
@@ -48,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvHeader"
+                android:id="@+id/tvHeader2"
                 android:text="How do we go about accepting a request?"
                 android:textSize="16dp"
                 android:textColor="#6E8F00"/>

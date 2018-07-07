@@ -299,7 +299,7 @@ public class LandingPage extends AppCompatActivity {
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    requestMultiplePermissions();
+                                    //requestMultiplePermissions();
                                 }
                             })
                             .create()
